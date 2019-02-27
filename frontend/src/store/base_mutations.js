@@ -1,15 +1,9 @@
-import Vue from 'vue'
-
 export const fill = (state, data) => {
   reset(state)
 
-  data && data.forEach(el => {
-    Vue.set(state.index, el.id, el)
-    state.list.push(el)
-  })
+  data && data.forEach(state.list.push)
 }
 
 export const reset = (state) => {
-  state.index = {}
   state.list = []
 }
