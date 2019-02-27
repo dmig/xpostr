@@ -1,0 +1,28 @@
+[globals]
+debug=true
+debug_requests=false
+
+[oauth]
+state_timeout=180
+
+[jwt]
+secret=PUT_SOME_RANDOM_STRING_HERE
+# minutes
+timeout=1440
+# seconds, autorefresh token if older than
+autorefresh=300
+
+[vk]
+client_id=YOUR-CLIENT-ID
+client_secret=YOU-CLIENT-SECRET
+redirect_uri=https://your.site/vkcb
+
+[telegram]
+api_id=YOUR-CLIENT-ID
+api_hash=YOU-CLIENT-SECRET
+avatars_path=statics/avatars
+
+[paths]
+db=/var/run/xpostr/main.sqlite
+avatars=/var/run/xpostr/avatars
+sessions=/var/run/xpostr/sessions
