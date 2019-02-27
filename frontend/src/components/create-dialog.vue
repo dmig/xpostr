@@ -63,7 +63,7 @@
 
       <q-card-actions align="right">
         <q-btn stretch label="Cancel" @click="reset" v-close-dialog />
-        <q-btn stretch label="Create" color="primary" :disable="!data.vk_id || !data.tg_id" @click="submit" v-close-dialog />
+        <q-btn stretch label="Create" color="primary" @click="submit" v-close-dialog />
       </q-card-actions>
     </q-card>
   </q-dialog>
