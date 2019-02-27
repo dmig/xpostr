@@ -1,8 +1,2 @@
-config.ini
-local.ini
-__pycache__
-*.pyc
-*.pyo
 .vscode
-*.session
 temp

@@ -1,0 +1,6 @@
+config.ini
+local.ini
+__pycache__
+*.pyo
+*.pyc
+*.session
