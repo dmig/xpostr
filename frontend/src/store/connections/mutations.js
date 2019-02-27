@@ -1,39 +1,28 @@
 import Vue from 'vue'
 
-const getKey = (item) => item.vk_id + '-' + item.tg_id
-
 export const fill = (state, data) => {
   reset(state)
 
   data && data.forEach(el => {
-    Vue.set(state.index, getKey(el), el)
     state.list.push(el)
   })
 }
 
 export const reset = (state) => {
-  state.index = {}
   state.list = []
 }
 
 export const set = (state, item) => {
-  let k = getKey(item)
+  let k = state.list.findIndex(el => el.vk_id === item.vk_id && el.tg_id === item.tg_id)
 
-  if (state.index[k]) {
-    Vue.set(state.index[k], 'active', item.active)
-    return
-  }
-
-  Vue.set(state.index, k, item)
-  state.list.push(item)
+  if (k === -1) state.list.push(item)
+  else Vue.set(state.list[k], 'active', item.active)
 }
 
 export const del = (state, item) => {
-  let k = getKey(item), el = state.index[k]
+  let k = state.list.findIndex(el => el.vk_id === item.vk_id && el.tg_id === item.tg_id)
 
-  if (!el) return
+  if (k === -1) return
 
-  let ix = state.list.indexOf(el)
-  Vue.delete(state.index, k)
-  Vue.delete(state.list, ix)
+  Vue.delete(state.list, k)
 }
