@@ -1,8 +1,6 @@
 #! /usr/bin/env python3
 # http://pycnic.nullism.com/docs/
-import os
-import sys
-sys.path.insert(1, os.path.abspath(os.path.realpath(__file__) + '/../..'))
+
 from lib.pycnic.core import WSGI
 from lib.config import config
 from handlers.vkauth import VKAuth

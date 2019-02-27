@@ -2,7 +2,6 @@
 import logging
 import sys
 import os
-# sys.path.append(os.path.dirname(__file__) + '/..')
 # from pprint import pprint
 from requests_oauthlib import OAuth2Session
 from lib.config import config
