@@ -7,7 +7,6 @@ from handlers.vkauth import VKAuth
 from handlers.vkgroups import VKGroups
 from handlers.vkinfo import VKInfo
 from handlers.tgauth import TGAuth
-from handlers.tginfo import TGInfo
 from handlers.tgchannels import TGChannels
 from handlers.connections import Connections
 from handlers.test import Test
