@@ -41,7 +41,8 @@ class TelegramHandler(AuthorizedHandler):
 
         filename = '{0}.{1}.jpg'.format(
             user.id,
-            md5('{e.dc_id}.{e.volume_id}.{e.local_id}.{e.secret}'.format(e=photo)).hexdigest()
+            md5('{e.dc_id}.{e.volume_id}.{e.local_id}.{e.secret}'.format(e=photo).encode('utf-8'))
+            .hexdigest()
         )
         filepath = os.path.join(config.get('paths', 'avatars'), filename)
 
