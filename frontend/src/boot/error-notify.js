@@ -3,7 +3,9 @@ import { Notify } from 'quasar'
 export default ({ Vue }) => {
   Vue.prototype.$errorNotify = function (error) {
     Notify.create({
-      message: error instanceof Error ? error.message : (error.statusText + ': ' + error.data.error),
+      message: error instanceof Error ? error.message
+        : error.data && error.data.error && error.data.data ? (error.data.error + ': ' + error.data.data)
+          : (error.statusText + ': ' + error.data.error),
       icon: 'error',
       color: 'negative'
     })
