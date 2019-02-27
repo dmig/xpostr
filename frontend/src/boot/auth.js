@@ -18,7 +18,7 @@ const getTokenPayload = () => {
   return {}
 }
 
-export default ({ Vue, router }) => {
+export default ({ Vue }) => {
   if (!Vue.http) {
     throw new Error('Vue-resource plugin is required to use auth plugin')
   }
@@ -61,31 +61,4 @@ export default ({ Vue, router }) => {
     getTokenPayload,
     clearToken
   }
-
-  router.beforeEach((to, from, next) => {
-    const auth = to.matched.reduce(
-      (acc, record) => {
-        if (!record.meta) return acc
-
-        if (record.meta.requireAuth !== undefined) acc.requireAuth = record.meta.requireAuth
-        if (record.meta.requireRole !== undefined) acc.role = record.meta.requireRole
-        return acc
-      },
-      {}
-    )
-    if (!auth.requireAuth) return next()
-
-    const user = getTokenPayload()
-    if (user) {
-      const roles = user.aud || ['guest']
-      if (auth.role && !roles.includes(auth.role)) {
-        return next({ path: '/403' })
-      }
-      return next()
-    }
-    next({
-      path: '/login',
-      query: { redirect: to.fullPath }
-    })
-  })
 }
