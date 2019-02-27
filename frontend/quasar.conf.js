@@ -34,7 +34,6 @@ module.exports = function (ctx) {
         'QCardSection',
         'QCheckbox',
         'QDialog',
-        'QHeader',
         'QIcon',
         'QInput',
         'QItem',
@@ -46,9 +45,7 @@ module.exports = function (ctx) {
         'QPageContainer',
         'QSelect',
         'QSeparator',
-        'QSpinner',
-        'QToolbar',
-        'QToolbarTitle'
+        'QSpinner'
       ],
 
       directives: [
