@@ -18,14 +18,15 @@ class TGChannels(TelegramHandler):
 
             ret = []
             for dialog in client.get_dialogs():
-                if not dialog.is_channel:
+                if not dialog.is_channel or dialog.is_group:
                     continue
 
                 photo = self._get_photo(client, dialog.entity)
                 ret.append({
                     'id': dialog.entity.id,
                     'title': dialog.entity.title,
-                    'photo': photo and join(config.get('telegram', 'avatars_path'), photo)
+                    'photo': photo and join(config.get('telegram', 'avatars_path'), photo),
+                    'uri': dialog.entity.username
                 })
 
             return ret
