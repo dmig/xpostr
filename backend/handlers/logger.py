@@ -9,6 +9,3 @@ class LoggerHandler(Handler):
             self.logger = logging.getLogger(
                 '%s.%s' % (self.__class__.__module__, self.__class__.__name__)
             )
-
-    def options(self):
-        return {}

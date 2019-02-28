@@ -13,12 +13,6 @@ from handlers.test import Test
 
 
 class app(WSGI):
-    headers = [
-        ("Access-Control-Allow-Origin", "*"),
-        ("Access-Control-Allow-Methods", "GET,POST,DELETE"),
-        ("Access-Control-Allow-Headers", "Accept,Authorization,Content-Type"),
-    ]
-
     routes = [
         ('/login', VKAuth()),
         ('/vkcb', VKAuth()),

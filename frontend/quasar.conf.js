@@ -66,7 +66,7 @@ module.exports = function (ctx) {
 
     build: {
       env: {
-        API: ctx.dev ? "'http://localhost:9090'" : "'/api'"
+        API: ctx.dev ? "'/api'" : "'/api'" // http://localhost:9090
       },
       scopeHoisting: true,
       // vueRouterMode: 'history',
@@ -87,7 +87,17 @@ module.exports = function (ctx) {
     devServer: {
       // https: true,
       // port: 8080,
-      open: true // opens browser window automatically
+      open: true, // opens browser window automatically
+      proxy: {
+        // proxy all requests starting with /api to jsonplaceholder
+        '/api': {
+          target: 'http://localhost:9090',
+          changeOrigin: true,
+          pathRewrite: {
+            '^/api': ''
+          }
+        }
+      }
     },
 
     // animations: 'all' --- includes all animations
