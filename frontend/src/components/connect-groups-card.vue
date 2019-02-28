@@ -58,7 +58,7 @@ export default {
     }
   },
   mounted () {
-    if (!this.connections) this.reload()
+    if (!this.connections.length) this.reload()
     this.$root.$on('createConnection', this.add)
   }
 }
