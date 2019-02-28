@@ -1,15 +1,9 @@
 <template>
   <div id="q-app">
-    <q-layout view="lHh Lpr lFf">
-      <q-page-container>
-        <q-page padding>
-          <vk-card class="q-mb-md"></vk-card>
-          <tg-card class="q-mb-md" v-if="is_authorized()"></tg-card>
-          <connect-groups-card v-if="is_tg_authorized"></connect-groups-card>
-          <create-dialog v-if="is_tg_authorized"></create-dialog>
-        </q-page>
-      </q-page-container>
-    </q-layout>
+    <vk-card class="q-ma-sm"></vk-card>
+    <tg-card class="q-ma-sm" v-if="is_authorized()"></tg-card>
+    <connect-groups-card class="q-ma-sm" v-if="is_tg_authorized"></connect-groups-card>
+    <create-dialog v-if="is_tg_authorized"></create-dialog>
   </div>
 </template>
 

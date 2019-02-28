@@ -39,10 +39,7 @@ module.exports = function (ctx) {
         'QItem',
         'QItemLabel',
         'QItemSection',
-        'QLayout',
         'QList',
-        'QPage',
-        'QPageContainer',
         'QSelect',
         'QSeparator',
         'QSpinner'
