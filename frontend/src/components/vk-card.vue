@@ -80,7 +80,7 @@ export default {
       this.$store.commit('sources/reset')
       this.$store.commit('tguser/reset')
       this.$store.commit('vkuser/reset')
-      this.$root.$forceUpdate()
+      this.$root.$emit('authorization')
     },
     reload: function () {
       this.loading = true
@@ -89,6 +89,28 @@ export default {
         this.$store.dispatch('targets/load')
       ]).catch(this.$errorNotify)
         .finally(() => { this.loading = false })
+    }
+  },
+  created () {
+    let state = window.location.hash
+    state = state.substring(state.indexOf('login_state=') + 12)
+
+    if (state) {
+      this.loading = true
+      console.debug('VK Login state:', state)
+      this.$http.get(this.$eps.login, { params: { state } })
+        .then(resp => {
+          if (resp.ok && resp.data.token) {
+            this.$auth.setToken(resp.data.token)
+            this.$root.$emit('authorization')
+            this.reload()
+          }
+        })
+        .catch(err => {
+          this.loading = false
+          this.$errorNotify(err)
+        })
+        .finally(() => window.history.replaceState(null, document.title, '/'))
     }
   },
   mounted () {

@@ -33,6 +33,11 @@ export default ({ Vue }) => {
     return Promise.resolve(response)
   }
 
+  const setToken = token => {
+    Vue.http.headers.common['Authorization'] = token
+    localStorage.setItem('token', token)
+  }
+
   const clearToken = () => {
     delete Vue.http.headers.common['Authorization']
     return localStorage.removeItem('token')
@@ -43,8 +48,7 @@ export default ({ Vue }) => {
       // Check for expired token response, if expired, refresh token and resubmit original request
       if (response.headers.get('Authorization')) {
         const token = response.headers.get('Authorization')
-        Vue.http.headers.common['Authorization'] = token
-        localStorage.setItem('token', token)
+        setToken(token)
       }
       return checkErrors(response, request)
     })
@@ -57,6 +61,7 @@ export default ({ Vue }) => {
 
   Vue.http.interceptors.push(authInterceptor)
   Vue.prototype.$auth = {
+    setToken,
     getToken,
     getTokenPayload,
     clearToken
