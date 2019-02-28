@@ -1,5 +1,5 @@
 <template>
-  <div id="q-app">
+  <div id="q-app" style="max-width: 950px; margin: auto">
     <vk-card class="q-ma-sm"></vk-card>
     <tg-card class="q-ma-sm" v-if="is_auth"></tg-card>
     <connect-groups-card class="q-ma-sm" v-if="is_tg_authorized"></connect-groups-card>
