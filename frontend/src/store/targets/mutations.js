@@ -10,6 +10,6 @@ export const fill = (state, data) => {
 }
 
 export const reset = (state) => {
-  state.index = {}
-  state.list = []
+  Vue.set(state, 'index', {})
+  Vue.set(state, 'list', [])
 }

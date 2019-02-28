@@ -1,3 +1,5 @@
+import Vue from 'vue'
+
 export const fill = (state, data) => {
   reset(state)
 
@@ -5,5 +7,5 @@ export const fill = (state, data) => {
 }
 
 export const reset = (state) => {
-  state.list = []
+  Vue.set(state, 'list', [])
 }
