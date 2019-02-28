@@ -114,7 +114,7 @@ export default {
       Promise.all([
         this.$store.dispatch('tguser/load'),
         this.$store.dispatch('sources/load')
-      ]).catch((err) => this.$errorNotify(err))
+      ]).catch(this.$errorNotify)
         .finally(() => { this.loading = false })
     }
   },

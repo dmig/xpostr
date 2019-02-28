@@ -74,12 +74,12 @@ export default {
     },
     logout: function () {
       console.debug('VK logout procedure...')
-          this.$auth.clearToken()
+      this.$auth.clearToken()
       this.$store.commit('connections/reset')
       this.$store.commit('targets/reset')
       this.$store.commit('sources/reset')
-          this.$store.commit('tguser/reset')
-          this.$store.commit('vkuser/reset')
+      this.$store.commit('tguser/reset')
+      this.$store.commit('vkuser/reset')
       this.$root.$forceUpdate()
     },
     reload: function () {
@@ -87,7 +87,7 @@ export default {
       Promise.all([
         this.$store.dispatch('vkuser/load'),
         this.$store.dispatch('targets/load')
-      ]).catch((err) => this.$errorNotify(err))
+      ]).catch(this.$errorNotify)
         .finally(() => { this.loading = false })
     }
   },
