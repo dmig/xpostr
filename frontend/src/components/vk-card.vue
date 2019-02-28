@@ -74,18 +74,13 @@ export default {
     },
     logout: function () {
       console.debug('VK logout procedure...')
-      this.$http
-        .delete(this.$eps.login)
-        .then(resp => {
           this.$auth.clearToken()
+      this.$store.commit('connections/reset')
+      this.$store.commit('targets/reset')
+      this.$store.commit('sources/reset')
           this.$store.commit('tguser/reset')
           this.$store.commit('vkuser/reset')
-          this.$store.commit('targets/reset')
-          this.$store.commit('sources/reset')
-          this.$store.commit('connections/reset')
-          this.$store.commit('age/reset')
-        })
-        .catch(this.$errorNotify)
+      this.$root.$forceUpdate()
     },
     reload: function () {
       this.loading = true
