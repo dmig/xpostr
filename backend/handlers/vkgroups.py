@@ -18,8 +18,8 @@ class VKGroups(AuthorizedHandler):
             params={
                 'v': '5.92',
                 'extended': 1,
-                'filter': 'moder', # 'groups,publics'
-                # 'fields': 'can_post',
+                'filter': 'groups,publics', # 'moder',
+                'fields': 'can_post',
                 'count': 1000,
                 'access_token': self.user['access_token']
             }
@@ -28,5 +28,6 @@ class VKGroups(AuthorizedHandler):
         return [{
             'id': g['id'],
             'title': g['name'],
-            'photo': g['photo_100']
-            } for g in r.get('response', {}).get('items', [])] #  if g['can_post']
+            'photo': g['photo_100'],
+            'uri': g['screen_name']
+            } for g in r.get('response', {}).get('items', []) if g['can_post']]
