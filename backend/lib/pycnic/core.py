@@ -176,7 +176,6 @@ class WSGI:
     after = None
     headers = None
     strip_path = True
-    json_cls = None
 
     def __init__(self, environ, start_response):
 
@@ -239,9 +238,9 @@ class WSGI:
         if isinstance(resp, (dict, list)):
             try:
                 if self.debug:
-                    jresp = json.dumps(resp, indent=4) # , cls=self.json_cls
+                    jresp = json.dumps(resp, indent=4)
                 else:
-                    jresp = json.dumps(resp) # , cls=self.json_cls
+                    jresp = json.dumps(resp)
             except Exception as err:
                 if self.debug:
                     msg = traceback.format_exc().split("\n")
