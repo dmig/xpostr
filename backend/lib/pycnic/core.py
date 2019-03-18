@@ -96,7 +96,7 @@ class Request(object):
             for cookie_line in self.environ['HTTP_COOKIE'].split(';'):
                 if "DELETED" in cookie_line:
                     continue
-                cname, cvalue = cookie_line.strip().split('=',1)
+                cname, cvalue = cookie_line.strip().split('=', 1)
                 self._cookies[cname] = cvalue
 
         return self._cookies
@@ -153,10 +153,10 @@ class Response(object):
     @property
     def headers(self):
         self._headers = []
-        for k,v in self.header_dict.items():
+        for k, v in self.header_dict.items():
             self._headers.append((k, v))
-        for k,v in self.cookie_dict.items():
-            self._headers.append(('Set-Cookie', '%s=%s'%(k,v)))
+        for k, v in self.cookie_dict.items():
+            self._headers.append(('Set-Cookie', '%s=%s' % (k, v)))
         return self._headers
 
     @property
@@ -195,9 +195,7 @@ class WSGI:
             environ=environ
         )
 
-        self.response = Response(
-            status_code = 200
-        )
+        self.response = Response(status_code=200)
 
         self.environ = environ
         self.start = start_response
@@ -207,10 +205,10 @@ class WSGI:
     def __iter__(self):
         try:
             if self.before:
-                self.before()
+                self.before() # pylint: disable=not-callable
             resp = self.delegate()
             if self.after:
-                self.after()
+                self.after() # pylint: disable=not-callable
             headers = self.response.headers
             if self.headers:
                 headers += self.headers
@@ -231,12 +229,12 @@ class WSGI:
             headers = [("Content-Type", "application/json")]
             self.start(STATUSES[500], headers)
             if self.debug:
-                resp = { "error": traceback.format_exc().split("\n")}
+                resp = {"error": traceback.format_exc().split("\n")}
             else:
-                resp = { "error": "Internal server error encountered." }
+                resp = {"error": "Internal server error encountered."}
 
         if self.teardown:
-            self.teardown()
+            self.teardown() # pylint: disable=not-callable
 
         if isinstance(resp, (dict, list)):
             try:
@@ -247,16 +245,17 @@ class WSGI:
             except Exception as err:
                 if self.debug:
                     msg = traceback.format_exc().split("\n")
-                    jresp = json.dumps({ "error": msg }, indent=4)
+                    jresp = json.dumps({"error": msg}, indent=4)
                 else:
                     msg = "An unhandled exception occured during response"
-                    jresp = json.dumps({ "error": msg })
+                    jresp = json.dumps({"error": msg})
             self.logger.debug("Sending JSON response: %s", jresp)
             return iter([jresp.encode('utf-8')])
-        elif isinstance(resp, str):
+
+        if isinstance(resp, str):
             self.logger.debug("Sending string response: %s", resp)
             return iter([resp.encode('utf-8')])
-        else:
+
             self.logger.debug("Sending unknown response: %s", resp)
             return iter(resp)
 
