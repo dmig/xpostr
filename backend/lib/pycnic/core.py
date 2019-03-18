@@ -2,6 +2,7 @@
 import re
 import traceback
 import logging
+from urllib.parse import quote_plus
 try:
     import ujson as json
 except ImportError:
@@ -138,14 +139,14 @@ class Response(object):
 
     def set_cookie(
             self, key, value, expires="", path='/', domain="", flags=[]):
-        value = value.replace(";","") # ; not allowed
         if expires:
             expires = "expires=%s; "%(expires)
         if domain:
             domain = "Domain=%s; "%(domain)
 
         self.cookie_dict[key] = "%s;%s%s path=%s; %s"\
-            %(value, domain, expires, path, "; ".join(flags))
+            %(quote_plus(value),
+              quote_plus(domain), expires, path, "; ".join(flags))
 
     def delete_cookie(self, key):
         self.set_cookie(key, "DELETED", expires="Thu, 01 Jan 1970 00:00:00 GMT")
@@ -156,7 +157,7 @@ class Response(object):
         for k, v in self.header_dict.items():
             self._headers.append((k, v))
         for k, v in self.cookie_dict.items():
-            self._headers.append(('Set-Cookie', '%s=%s' % (k, v)))
+            self._headers.append(('Set-Cookie', '%s=%s' % (quote_plus(k), v)))
         return self._headers
 
     @property
@@ -255,8 +256,8 @@ class WSGI:
             self.logger.debug("Sending string response: %s", resp)
             return iter([resp.encode('utf-8')])
 
-            self.logger.debug("Sending unknown response: %s", resp)
-            return iter(resp)
+        self.logger.debug("Sending unknown response: %s", resp)
+        return iter(resp)
 
     def delegate(self):
         path = self.request.path
