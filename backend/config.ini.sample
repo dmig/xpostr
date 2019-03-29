@@ -1,6 +1,7 @@
 [globals]
 debug=true
 debug_requests=false
+debug_telethon=false
 
 [oauth]
 state_timeout=180
@@ -15,7 +16,6 @@ autorefresh=300
 [vk]
 client_id=YOUR-CLIENT-ID
 client_secret=YOU-CLIENT-SECRET
-redirect_uri=https://your.site/vkcb
 
 [telegram]
 api_id=YOUR-CLIENT-ID
@@ -23,6 +23,9 @@ api_hash=YOU-CLIENT-SECRET
 avatars_path=statics/avatars
 
 [paths]
-db=/var/run/xpostr/main.sqlite
+db_auth=/var/run/xpostr/auth.sqlite
+db_main=/var/run/xpostr/main.sqlite
 avatars=/var/run/xpostr/avatars
 sessions=/var/run/xpostr/sessions
+temp=/tmp/xpostr
+daemon_socket=/var/run/xpostr/xpostr.socket
