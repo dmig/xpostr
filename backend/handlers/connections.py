@@ -1,4 +1,4 @@
-from lib import db
+from lib.rpc_client import rpc_call
 from lib.pycnic.errors import HTTP_400
 from handlers.authorized import AuthorizedHandler
 
@@ -7,8 +7,7 @@ class Connections(AuthorizedHandler):
     audience = 'authorized'
 
     def get(self):
-        return [dict(zip(c.keys(), c)) \
-            for c in db.get_group_connections(self.user['id'])]
+        return rpc_call('get_user_connections', self.user['id'])
 
     def post(self):
         vk_id = self.request.data.get('vk_id')
@@ -18,7 +17,7 @@ class Connections(AuthorizedHandler):
         if not (vk_id and tg_id):
             raise HTTP_400('Invalid `vk_id` or `tg_id` value')
 
-        db.set_group_connection(self.user['id'], vk_id, tg_id, active)
+        rpc_call('set_connection', self.user['id'], vk_id, tg_id, active)
 
         self.response.status_code = 204
         return ''
@@ -30,7 +29,7 @@ class Connections(AuthorizedHandler):
         if not (vk_id and tg_id):
             raise HTTP_400('Invalid `vk_id` or `tg_id` value')
 
-        db.del_group_connection(self.user['id'], vk_id, tg_id)
+        rpc_call('remove_connection', self.user['id'], vk_id, tg_id)
 
         self.response.status_code = 204
         return ''
