@@ -4,7 +4,7 @@ import sys
 import os
 # from pprint import pprint
 from requests_oauthlib import OAuth2Session
-from lib.config import config
+from backend.lib.config import config
 
 if len(sys.argv) < 2:
     print('Usage:', os.path.basename(__file__), '[callback url]')
