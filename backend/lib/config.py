@@ -22,6 +22,10 @@ if not config:
     )
     if config.getboolean('globals', 'debug_requests', fallback=False):
         http_client.HTTPConnection.debuglevel = 1
-        requests_log = logging.getLogger("requests.packages.urllib3")
-        requests_log.setLevel(logging.DEBUG)
-        requests_log.propagate = True
+        logger = logging.getLogger("requests.packages.urllib3")
+        logger.setLevel(logging.DEBUG)
+        logger.propagate = True
+
+    logger = logging.getLogger("telethon")
+    logger.setLevel(logging.DEBUG \
+        if config.getboolean('globals', 'debug_telethon', fallback=False) else logging.INFO)
