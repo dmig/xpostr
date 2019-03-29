@@ -14,7 +14,7 @@ from handlers.test import Test
 
 class app(WSGI):
     routes = [
-        ('/login', VKAuth()),
+        ('/vkauth', VKAuth()),
         ('/vkuser', VKInfo()),
 
         ('/tgauth', TGAuth()),
