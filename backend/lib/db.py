@@ -1,3 +1,5 @@
+import logging
+import os
 try:
     import ujson as json
 except ImportError:
@@ -6,58 +8,80 @@ from time import time
 import sqlite3
 from lib.config import config
 
-__connection = None
+_logger = logging.getLogger(__name__)
+__connections = {}
+__tables = {
+    'auth': [
+        """auth_interim (
+            state varchar(256) not null,
+            expire int unsigned not null,
+            data text not null,
+            primary key (state)
+        )""",
+    ],
+    'main': [
+        """vk_users (
+            id int unsigned not null,
+            fullname varchar(256) not null,
+            photo varchar(256),
+            phone_number varchar(32),
+            access_token varchar(256) not null,
+            primary key (id)
+        )"""
+        """group_connections (
+            user_id int unsigned not null,
+            tg_id int unsigned not null,
+            vk_id int unsigned not null,
+            active tinyint not null default 1,
+            last_status varchar(256),
+            last_update int unsigned,
+            primary key (user_id, tg_id, vk_id)
+        )"""
+    ]
+}
 
-def _connect():
-    global __connection
-    if __connection:
-        return
+def connect(db, ro=False):
+    global __connections
 
-    __connection = sqlite3.connect(
-        config.get('paths', 'db', fallback='./main'),
-        check_same_thread=False
+    k = db + 'R' if ro else 'W'
+    if k in __connections:
+        return __connections[k]
+
+    if ro and db + 'W' in __connections:
+        return __connections[db + 'W']
+
+    _logger.debug('Creating connection: %s', db)
+
+    __connections[k] = sqlite3.connect(
+        'file:' + os.path.abspath(
+            config.get('paths', 'db_' + db, fallback='./main')
+        ) + ('?mode=ro' if ro else ''),
+        check_same_thread=False, uri=True
     )
-    __connection.row_factory = sqlite3.Row
-    cursor = __connection.cursor()
-    cursor.execute("select name from sqlite_master where type='table' and name='auth_interim'")
-    if not cursor.fetchone():
-        for d in [
-                """auth_interim (
-                    state varchar(256) not null,
-                    expire int unsigned not null,
-                    data text not null,
-                    primary key (state)
-                )""",
-                """vk_users (
-                    id int unsigned not null,
-                    fullname varchar(256) not null,
-                    photo varchar(256),
-                    phone_number varchar(32),
-                    access_token varchar(256) not null,
-                    primary key (id)
-                )"""
-                """group_connections (
-                    user_id int unsigned not null,
-                    tg_id int unsigned not null,
-                    vk_id int unsigned not null,
-                    active tinyint not null default 1,
-                    last_status varchar(256),
-                    last_update int unsigned,
-                    primary key (user_id, tg_id, vk_id)
-                )"""
-        ]:
+    __connections[k].row_factory = sqlite3.Row
+
+    cursor = __connections[k].cursor()
+    cursor.execute("select count(*) from sqlite_master where type='table'")
+    cnt = cursor.fetchone()[0]
+    if not cnt:
+        if ro:
+            raise Exception(f'DB {db} not ready')
+
+        for d in __tables[db]:
             cursor.execute('create table {}'.format(d))
         cursor.connection.commit()
     cursor.close()
 
-def _get_cursor():
-    _connect()
+    return __connections[k]
 
-    return __connection.cursor()
+
+def get_cursor(db='main', ro=False) -> sqlite3.Cursor:
+    conn = connect(db, ro)
+    return conn.cursor()
 
 
 def get_interim_state(state):
-    cursor = _get_cursor()
+    cursor = get_cursor('auth')
 
     cursor.execute(
         "SELECT data FROM auth_interim WHERE state = ? AND expire > ?",
@@ -70,7 +94,7 @@ def get_interim_state(state):
     return json.loads(res[0]) if res else None
 
 def set_interim_state(state, data, timeout=None):
-    cursor = _get_cursor()
+    cursor = get_cursor('auth')
 
     cursor.execute(
         "SELECT data FROM auth_interim WHERE state = ? AND expire > ?",
@@ -91,14 +115,14 @@ def set_interim_state(state, data, timeout=None):
     cursor.close()
 
 def del_interim_state(state):
-    cursor = _get_cursor()
+    cursor = get_cursor('auth')
     cursor.execute('DELETE FROM auth_interim WHERE state = ? OR expire <= ?', (state, int(time())))
     cursor.connection.commit()
     cursor.close()
 
 
 def get_user(user_id):
-    cursor = _get_cursor()
+    cursor = get_cursor()
 
     cursor.execute(
         'SELECT id, fullname, photo, phone_number, access_token FROM vk_users WHERE id = ?',
@@ -111,7 +135,7 @@ def get_user(user_id):
     return res
 
 def save_user(user):
-    cursor = _get_cursor()
+    cursor = get_cursor()
 
     cursor.execute(
         'INSERT INTO vk_users (id, fullname, photo, access_token) '
@@ -124,8 +148,17 @@ def save_user(user):
     cursor.connection.commit()
     cursor.close()
 
+def del_user(user_id):
+    cursor = get_cursor()
+
+    cursor.execute('DELETE FROM group_connections WHERE user_id = ?', (user_id, ))
+    cursor.execute('DELETE FROM vk_users WHERE id = ?', (user_id, ))
+
+    cursor.connection.commit()
+    cursor.close()
+
 def set_phone_number(user_id, phone_number):
-    cursor = _get_cursor()
+    cursor = get_cursor()
 
     cursor.execute(
         'UPDATE vk_users SET phone_number=? WHERE id=?',
@@ -137,7 +170,7 @@ def set_phone_number(user_id, phone_number):
 
 
 def get_group_connections(user_id):
-    cursor = _get_cursor()
+    cursor = get_cursor()
 
     cursor.execute(
         'SELECT vk_id, tg_id, active, last_status, last_update '
@@ -150,20 +183,20 @@ def get_group_connections(user_id):
 
     return res
 
-def set_group_connection(user_id, vk_id, tg_id, active=1):
-    cursor = _get_cursor()
+def set_group_connection(user_id, vk_id, tg_id, active=True):
+    cursor = get_cursor()
 
     cursor.execute(
         'INSERT INTO group_connections (user_id, vk_id, tg_id, active) VALUES (?, ?, ?, ?) '
         'ON CONFLICT(user_id, vk_id, tg_id) DO UPDATE SET active=excluded.active',
-        (user_id, vk_id, tg_id, active)
+        (user_id, vk_id, tg_id, int(active))
     )
 
     cursor.connection.commit()
     cursor.close()
 
 def set_group_connection_status(user_id, vk_id, tg_id, status):
-    cursor = _get_cursor()
+    cursor = get_cursor()
 
     cursor.execute(
         'UPDATE group_connections SET last_status=?, last_update=? '
@@ -175,7 +208,7 @@ def set_group_connection_status(user_id, vk_id, tg_id, status):
     cursor.close()
 
 def del_group_connection(user_id, vk_id, tg_id):
-    cursor = _get_cursor()
+    cursor = get_cursor()
 
     cursor.execute(
         'DELETE FROM group_connections WHERE user_id = ? AND vk_id = ? AND tg_id = ?',
