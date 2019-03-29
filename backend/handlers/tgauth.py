@@ -1,3 +1,5 @@
+import os
+from telethon import TelegramClient
 from telethon.errors import SessionPasswordNeededError,\
     PhoneNumberBannedError, PhoneNumberInvalidError,\
     PhoneCodeExpiredError, PhoneCodeInvalidError, PhoneCodeEmptyError, \
@@ -5,32 +7,23 @@ from telethon.errors import SessionPasswordNeededError,\
 from telethon.utils import parse_phone
 from lib.pycnic.errors import HTTP_400, HTTP_500, HTTPError
 from lib import db
-from handlers.telegram import TelegramHandler
+from lib.config import config
+from lib.rpc_client import rpc_call
+from handlers.authorized import AuthorizedHandler
 
 
-class TGAuth(TelegramHandler):
+class TGAuth(AuthorizedHandler):
+    audience = 'authorized'
+
     def get(self):
-        client = self._get_client()
-
-        if not client:
-            return {'authorized': False}
-
-        msg = None
-        try:
-            client.connect()
-
-            if client.is_user_authorized():
-                return self._get_info(client)
-        except Exception as e:
-            self.logger.error('Telegram communication error %s', e)
-            msg = str(e)
-        finally:
-            client.disconnect()
-
-        raise HTTP_500('Internal error', msg)
+        return rpc_call('get_tg_user', self.user['id'])
 
     def post(self):
         phone = parse_phone(self.request.data.get('phone'))
+
+        if phone == self.user['phone_number']:
+            return self.get()
+
         code = self.request.data.get('code')
         password = self.request.data.get('password')
         phone_code_hash = None
@@ -39,14 +32,18 @@ class TGAuth(TelegramHandler):
             raise HTTP_400('Invalid `phone` value')
 
         msg = None
-        client = self._get_client(phone)
         try:
+            client = TelegramClient(
+                os.path.join(config.get('paths', 'sessions'), parse_phone(phone)),
+                config.get('telegram', 'api_id'),
+                config.get('telegram', 'api_hash')
+            )
             if not client.is_connected():
                 client.connect()
 
             # check if already authorized
             if client.is_user_authorized():
-                return self._authorized(client, phone)
+                return self._authorized(phone)
 
             # 2nd step
             if code:
@@ -61,7 +58,7 @@ class TGAuth(TelegramHandler):
 
             # 2nd/3rd step success
             if code and client.is_user_authorized():
-                return self._authorized(client, phone)
+                return self._authorized(phone)
 
             # 1st step
             if not resp.phone_registered:
@@ -76,6 +73,7 @@ class TGAuth(TelegramHandler):
                 'authorized': False,
                 'code': True
             }
+        # TODO handle potential sqlite connection timeout
         except SessionPasswordNeededError:
             return {
                 'authorized': False,
@@ -100,15 +98,13 @@ class TGAuth(TelegramHandler):
 
     def delete(self):
         if self.user['phone_number']:
-            client = self._get_client()
-            client.connect()
-            if client.log_out():
-                db.set_phone_number(self.user['id'], None)
+            rpc_call('remove_tg_user', self.user['id'])
 
         self.response.status_code = 204
         return ''
 
-    def _authorized(self, client, phone):
+
+    def _authorized(self, phone):
         db.del_interim_state(phone)
-        db.set_phone_number(self.user['id'], phone)
-        return self._get_info(client)
+        rpc_call('set_phone_number', self.user['id'], phone)
+        return self.get()
