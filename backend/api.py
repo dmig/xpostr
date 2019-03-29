@@ -4,7 +4,6 @@
 from lib.pycnic.core import WSGI
 from lib.config import config
 from handlers.vkauth import VKAuth
-from handlers.vkcallback import VKCallback
 from handlers.vkgroups import VKGroups
 from handlers.vkinfo import VKInfo
 from handlers.tgauth import TGAuth
@@ -16,7 +15,6 @@ from handlers.test import Test
 class app(WSGI):
     routes = [
         ('/login', VKAuth()),
-        ('/vkcb', VKCallback()),
         ('/vkuser', VKInfo()),
 
         ('/tgauth', TGAuth()),
