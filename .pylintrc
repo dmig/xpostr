@@ -1,0 +1,7 @@
+[MASTER]
+extension-pkg-whitelist=ujson,setproctitle
+disable=C0111,C0103,C0303,R0903
+
+[MISCELLANEOUS]
+# List of note tags to take in consideration, separated by a comma.
+notes=FIXME,XXX,TODO,BUG
