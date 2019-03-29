@@ -1,6 +1,6 @@
 from lib.pycnic.errors import HTTP_401, HTTP_403, HTTP_500
-import lib.jwt_auth as auth
 from lib import db
+from lib import jwt_auth
 from handlers.logger import LoggerHandler
 
 
@@ -22,19 +22,19 @@ class AuthorizedHandler(LoggerHandler):
         token = self._parse_auth_header()
         if token:
             try:
-                payload = auth.decode_token(token, self.audience)
+                payload = jwt_auth.decode_token(token, self.audience)
                 user_id = payload.get('id')
                 user = db.get_user(user_id)
 
                 if not user:
                     raise HTTP_403("Access denied")
-            except auth.DecodeError as e:
+            except jwt_auth.DecodeError as e:
                 self.logger.warning(e)
                 raise HTTP_401("Unable to parse authentication token")
-            except auth.ExpiredSignatureError:
+            except jwt_auth.ExpiredSignatureError:
                 if 'guest' not in self.audience:
                     raise HTTP_401("Expired token")
-            except auth.InvalidAudienceError:
+            except jwt_auth.InvalidAudienceError:
                 raise HTTP_403("Incorrect claims")
             except Exception as e:
                 self.logger.exception(e)
