@@ -8,11 +8,17 @@ pylint = "*"
 uwsgi = "*"
 
 [packages]
+aiodns = "*"
+aiohttp = "*"
+aiorpc = {editable = true,git = "https://github.com/dmig/aiorpc.git"}
+cchardet = "*"
+cryptg = "*"
+isort = "*"
+pyjwt = "*"
+requests = "*"
 telethon = "*"
 ujson = "*"
-pyjwt = "*"
-requests-oauthlib = "*"
-cachetools = "*"
+uvloop = "*"
 
 [requires]
-python_version = "3.6"
+python_version = "3.7"
