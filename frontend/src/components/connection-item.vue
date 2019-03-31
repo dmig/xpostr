@@ -63,10 +63,12 @@ export default {
 
     }
   },
-  methods: {
+  filters: {
     formatTime (ts) {
       return (new Date(ts * 1000)).toLocaleString(navigator.language)
-    },
+    }
+  },
+  methods: {
     del () {
       console.debug('Delete connection', this.item.vk_id, this.item.tg_id)
       let payload = {
