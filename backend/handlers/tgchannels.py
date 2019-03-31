@@ -1,5 +1,4 @@
 from lib.rpc_client import rpc_call
-# from pycnic.errors import HTTP_500, HTTPError
 from handlers.telegram import TelegramHandler
 
 class TGChannels(TelegramHandler):
