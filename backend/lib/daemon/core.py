@@ -2,6 +2,7 @@ import asyncio
 import functools
 import logging
 import os
+from time import time
 from typing import Awaitable
 from telethon.utils import parse_phone
 from telethon import TelegramClient, events
@@ -134,7 +135,7 @@ def set_connection_status(vk_user_id: int, vk_group_id: int, tg_channel_id: int,
     conn = get_connection(vk_user_id, vk_group_id, tg_channel_id)
 
     conn.last_status = status # pylint: disable=attribute-defined-outside-init
-    conn.last_update = asyncio.time.time() # pylint: disable=attribute-defined-outside-init
+    conn.last_update = time() # pylint: disable=attribute-defined-outside-init
 
     _logger.debug('Set connection status %s', conn)
 
