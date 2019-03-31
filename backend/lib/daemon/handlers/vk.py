@@ -7,7 +7,7 @@ import aiohttp
 import ujson
 from lib import db
 from lib.daemon import context
-from lib.daemon.handlers.tg import handle_remove_tg_user
+from lib.daemon.handlers.tg import handle_remove_tg_user as remove_tg_user
 
 _logger = logging.getLogger(__name__)
 
@@ -40,7 +40,7 @@ def handle_remove_vk_user(vk_user_id):
         _logger.info('User not found: %d', vk_user_id)
         return False
 
-    asyncio.ensure_future(handle_remove_tg_user(vk_user_id))\
+    asyncio.ensure_future(remove_tg_user(vk_user_id))\
         .add_done_callback(lambda res: res.result() and db.del_user(vk_user_id))
 
     return True
