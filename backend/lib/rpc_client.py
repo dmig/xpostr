@@ -15,7 +15,7 @@ def rpc_call(method, *args, timeout=3):
 
     loop = uvloop.new_event_loop()
     asyncio.set_event_loop(loop)
-    logger.debug('Calling: %s', server_socket)
+    logger.debug('Calling: %s', method)
 
     client = RPCClient(path=server_socket, timeout=timeout,
                        pack_params=pack_params, unpack_params=unpack_params)
