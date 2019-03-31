@@ -169,6 +169,7 @@ export default {
           this.loading = false
           this.stage = 0
           this.code = ''
+          this.$refs['code-input'].resetValidation()
         })
     },
     logout: function () {
