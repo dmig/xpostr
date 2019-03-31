@@ -122,7 +122,7 @@ async def _repost_message(vk_user_id: int, vk_group_id: int, event):
     try:
         xposter = xpost.WallPost(access_token, vk_group_id, msg)
         await xposter.upload()
-        status = 'ok'
+        status = 'success'
     except Exception as e:
         _logger.exception('Repost failed')
         status = str(e)
