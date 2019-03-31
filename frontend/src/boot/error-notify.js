@@ -7,7 +7,7 @@ export default ({ Vue }) => {
         : error.status
           ? (error.data && error.data.error && error.data.data
             ? error.data.error + ': ' + error.data.data
-            : error.statusText + ': ' + error.data.error)
+            : error.statusText + ': ' + (error.data.error ? error.data.error : error.data))
           : 'Connection error',
       icon: 'error',
       color: 'negative'
