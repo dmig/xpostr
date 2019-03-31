@@ -66,8 +66,8 @@
           <q-item-section>
             <q-input v-model="code" type="url" color="grey-10" class="full-width" ref="code-input"
               label="Copy that address and paste it here to finish the login process"
-              lazy-rules :readonly="stage == 0 || stage == 3" :rules="[this.validateUrl]"
-              @change="proceed" />
+              lazy-rules :rules="[this.validateUrl]"
+              @change="proceed" @focus="stage2"/>
           </q-item-section>
         </q-item>
         <q-item>
@@ -122,23 +122,30 @@ export default {
       return re.test(val) || 'This doesn\'t seem to be a valid URL with the code'
     },
     proceed: function () {
+      if (this.code) {
+        this.stage = 2
+      } else {
+        this.stage = 0
+        this.$refs['code-input'].resetValidation()
+      }
       switch (this.stage) {
         case 0:
           this.startLogin()
-          this.stage++
+          this.stage = 1
           break
-        case 1:
         case 2:
-          this.stage = 2
           let code = this.code.match(re)
           if (code) {
-            this.stage++
             this.finishLogin(code[1])
+            this.stage = 3
           }
           break
         default:
           break
       }
+    },
+    stage2: function () {
+      this.stage = 2
     },
     startLogin: function () {
       this.loading = true
@@ -158,6 +165,7 @@ export default {
       this.$http
         .get(this.$eps.login, { params: { code } })
         .then(resp => {
+          console.debug(resp)
           if (resp.ok && resp.data.token) {
             this.$auth.setToken(resp.data.token)
             this.$root.$emit('authorization')
