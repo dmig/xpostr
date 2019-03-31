@@ -336,7 +336,8 @@ class WallPost(Uploadable):
 
         # extract message attachment
         extractors = (self._process_unsupported, self._process_geo, self._process_photo,
-                      self._process_webpage, self._process_poll, self._process_document)
+                      self._process_webpage, self._process_poll, self._process_document,
+                      self._process_rich_text)
         for extractor in extractors:
             if extractor():
                 break
@@ -376,8 +377,18 @@ class WallPost(Uploadable):
         )
         self.source.text += link
 
-    def _process_rich_text(self, params):
+    def _process_rich_text(self):
         min_length = config.getint('xpost', 'rich_text_min_length', fallback=256)
+        is_rich = bool(self.source.entities) and \
+            bool(_type_in_list(self.source.entities, (
+                types.MessageEntityBold, types.MessageEntityItalic,
+                types.MessageEntityPre, types.MessageEntityCode
+                ))) and \
+            len(self.source.raw_text) >= min_length
+
+        if not is_rich:
+            return False
+
         min_title_length = 16
         max_title_length = min_length // 4
         pos = min(p for p in (
@@ -388,7 +399,6 @@ class WallPost(Uploadable):
         ) if p != -1)
 
         title = self.source.raw_text[0:pos] + '...'
-        params['message'] = title
 
         fmt_list = {
             types.MessageEntityBold: '<b>{0}</b>',
@@ -423,6 +433,7 @@ class WallPost(Uploadable):
             ''.join(text),
             self.attachments
         ))
+        return True
 
     def _process_text(self, params):
         if not self.source.text:
@@ -449,13 +460,6 @@ class WallPost(Uploadable):
             if isinstance(e, types.MessageEntityTextUrl):
                 text_urls.append(e)
 
-        min_length = config.getint('xpost', 'rich_text_min_length', fallback=256)
-        is_rich = bool(self.source.entities) and \
-            bool(_type_in_list(self.source.entities, (
-                types.MessageEntityBold, types.MessageEntityItalic,
-                types.MessageEntityPre, types.MessageEntityCode
-                ))) and \
-            len(self.source.raw_text) >= min_length
 
         geo = _type_in_list(self.attachments, Geo)
         if geo:
@@ -463,9 +467,13 @@ class WallPost(Uploadable):
             params['lat'] = geo.lat
             params['long'] = geo.long
 
-        if is_rich:
-            self._process_rich_text(params)
-        elif text_urls:
+        # if this is a rich text
+        rich_page = _type_in_list(self.attachments, Page)
+        if rich_page:
+            params['message'] = rich_page.title
+            return False
+
+        if text_urls:
             msg = []
             prev = 0
             for tu in text_urls:
