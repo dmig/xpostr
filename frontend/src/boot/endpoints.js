@@ -1,7 +1,7 @@
 const base = process.env.API
 
 export const endpoints = {
-  login: base + '/login',
+  login: base + '/vkauth',
   vkuser: base + '/vkuser',
   tguser: base + '/tguser',
   tgauth: base + '/tgauth',
