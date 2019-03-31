@@ -9,14 +9,13 @@ from lib.pycnic.errors import HTTP_400, HTTP_500, HTTPError
 from lib import db
 from lib.config import config
 from lib.rpc_client import rpc_call
-from handlers.authorized import AuthorizedHandler
+from handlers.telegram import TelegramHandler
 
 
-class TGAuth(AuthorizedHandler):
-    audience = 'authorized'
+class TGAuth(TelegramHandler):
 
     def get(self):
-        return rpc_call('get_tg_user', self.user['id'])
+        return self._set_photo_path(rpc_call('get_tg_user', self.user['id']))
 
     def post(self):
         phone = parse_phone(self.request.data.get('phone'))

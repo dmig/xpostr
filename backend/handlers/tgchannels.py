@@ -1,7 +1,8 @@
 from lib.rpc_client import rpc_call
 # from lib.pycnic.errors import HTTP_500, HTTPError
-from handlers.authorized import AuthorizedHandler
+from handlers.telegram import TelegramHandler
 
-class TGChannels(AuthorizedHandler):
+class TGChannels(TelegramHandler):
+
     def get(self):
-        return rpc_call('get_sources', self.user['id'], timeout=10)
+        return list(map(self._set_photo_path, rpc_call('get_sources', self.user['id'], timeout=10)))
