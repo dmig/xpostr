@@ -301,7 +301,7 @@ class Fwd(Url, Uploadable):
     async def upload(self):
         entity = await self.client.get_entity(self.group_id)
         if entity.username:
-        self.url = 'https://t.me/{}/{}'.format(entity.username, self.post_id)
+            self.url = 'https://t.me/{}/{}'.format(entity.username, self.post_id)
 
         return self.url
 
@@ -323,7 +323,7 @@ class WallPost(Uploadable):
     endpoint = _VK_BASE + 'wall.post'
 
     def __init__(self, access_token, vk_group_id: int, message: types.Message,
-        *, fwd_from=FWD_ATTACH):
+                 *, fwd_from=FWD_ATTACH):
         super().__init__(
             aiohttp.ClientSession(raise_for_status=True, json_serialize=ujson.dumps),
             {'v': '5.92', 'access_token': access_token},
@@ -597,7 +597,7 @@ class WallPost(Uploadable):
                 url = _type_in_list(self.attachments, Url)
 
         if self.attachments:
-            postdata['attachments'] = [str(a) for a in self.attachments]
+            postdata['attachments'] = [str(a) for a in self.attachments if str(a)]
 
         return postdata
 
