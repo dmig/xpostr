@@ -63,7 +63,13 @@ class VKAuth(LoggerHandler):
                 raise VKException(user)
 
             user = user.get('response', {})
-            user = user[0] if user else {}
+            user = {
+                'id': user[0]['id'],
+                'fullname':\
+                    (user[0].get('first_name', '') + ' ' + user[0].get('last_name', '')).strip(),
+                'photo': user[0].get('photo_100'),
+                'access_token': auth['access_token']
+            } if user else {}
 
             res = rpc_call('set_vk_user', user)
 
