@@ -300,6 +300,7 @@ class Fwd(Url, Uploadable):
 
     async def upload(self):
         entity = await self.client.get_entity(self.group_id)
+        if entity.username:
         self.url = 'https://t.me/{}/{}'.format(entity.username, self.post_id)
 
         return self.url
