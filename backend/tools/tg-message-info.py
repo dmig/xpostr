@@ -1,11 +1,12 @@
 #! /usr/bin/env python3
 import sys
 import os
+sys.path.insert(0, os.path.abspath(__file__ + '/../..'))
 from telethon import TelegramClient, sync # pylint: disable=unused-import
 from telethon.tl import types
 from telethon.utils import parse_phone
-from backend.lib.config import config
-from backend.lib.xpost import _type_in_list
+from lib.config import config
+from lib.xpost import _type_in_list
 
 
 if len(sys.argv) < 2:
@@ -34,7 +35,7 @@ try:
                 continue
 
             print(message)
-            # print(client.get_entity(message.to_id))
+            print(client.get_entity(message.to_id))
 
             min_length = config.getint('xpost', 'rich_text_min_length', fallback=256)
             is_rich = bool(message.entities) and bool(_type_in_list(
