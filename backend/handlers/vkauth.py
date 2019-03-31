@@ -13,6 +13,13 @@ class VKAuth(LoggerHandler):
         # final stage
         if code:
             return self._final_stage(code)
+        elif self.request.args.get('error'):
+            self.logger.info('Error response from VK: %s', self.request.args)
+
+            raise HTTP_403(
+                self.request.args.get('error_description'),
+                self.request.args.get('error_reason', self.request.args.get('error'))
+            )
 
         # first stage
         client_id = config.get('vk', 'client_id')
@@ -26,17 +33,6 @@ class VKAuth(LoggerHandler):
         }
 
     def _final_stage(self, code):
-        client_id = config.get('vk', 'client_id')
-
-
-        if not code:
-            self.logger.info('Error response from VK: %s', self.request.args)
-
-            raise HTTP_403(
-                self.request.args.get('error_description'),
-                self.request.args.get('error_reason', self.request.args.get('error'))
-            )
-
         client_id = config.get('vk', 'client_id')
         client_secret = config.get('vk', 'client_secret')
         vksession = Session()
