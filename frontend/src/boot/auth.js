@@ -34,11 +34,13 @@ export default ({ Vue }) => {
   }
 
   const setToken = token => {
+    console.debug('Saving token:', token)
     Vue.http.headers.common['Authorization'] = token
     localStorage.setItem('token', token)
   }
 
   const clearToken = () => {
+    console.debug('Removing token')
     delete Vue.http.headers.common['Authorization']
     return localStorage.removeItem('token')
   }
