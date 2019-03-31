@@ -124,7 +124,7 @@ async def _repost_message(vk_user_id: int, vk_group_id: int, event):
         m_id = await xposter.upload()
         status = f'success: https://vk.com/wall-{vk_group_id}_{m_id}'
     except Exception as e:
-        _logger.exception('Repost failed')
+        _logger.exception('Repost failed: %d/%d', msg.to_id.channel_id, msg.id)
         status = str(e)
 
     await event.client.send_read_acknowledge(msg.to_id, message=msg)
