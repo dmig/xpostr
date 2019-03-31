@@ -47,7 +47,7 @@
       <q-input v-model="pwd" type="password" label="2FA Password" :readonly="loading" />
     </q-card-section>
     <q-card-actions align="right" v-if="showForm">
-      <q-btn color="primary" :loading="loading" @click="login">Submit</q-btn>
+      <q-btn id="submit-btn" color="primary" :loading="loading" @click="login">Submit</q-btn>
     </q-card-actions>
   </q-card>
 </template>
@@ -127,5 +127,8 @@ export default {
 <style>
 .bg-tg {
   background-color: #0088cc;
+}
+#submit-btn {
+  padding: 0 48px;
 }
 </style>
