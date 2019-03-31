@@ -6,4 +6,4 @@ class VKGroups(AuthorizedHandler):
     audience = 'authorized'
 
     def get(self):
-        return rpc_call('get_targets', self.user['id'], timeout=5)
+        return list(rpc_call('get_targets', self.user['id'], timeout=5))
