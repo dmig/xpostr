@@ -25,7 +25,7 @@ class AuthorizedHandler(LoggerHandler):
                 payload = jwt_auth.decode_token(token, self.audience)
                 user_id = payload.get('id')
 
-                user = rpc_call('get_user', user_id)
+                user = rpc_call('get_vk_user', user_id)
 
                 if not user:
                     raise HTTP_403("Access denied")
