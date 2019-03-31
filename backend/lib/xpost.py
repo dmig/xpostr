@@ -584,7 +584,7 @@ class WallPost(Uploadable):
 
                 self.attachments.append(cls(
                     self.session, self.default_params, self.group_id,
-                    self.source.client, doc, doc.mime_type, fn_attr.file_name
+                    self.source.client, doc, doc.mime_type, fn_attr.file_name if fn_attr else None
                 ))
             return True
 
