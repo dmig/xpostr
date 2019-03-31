@@ -1,9 +1,9 @@
-from requests import Session
+from requests import Session, exceptions
 from lib import jwt_auth
 from lib.config import config
 from lib.errors import VKException
 from lib.rpc_client import rpc_call
-from lib.pycnic.errors import HTTP_403, HTTP_500
+from lib.pycnic.errors import HTTP_403, HTTP_500, HTTPError
 from handlers.logger import LoggerHandler
 
 class VKAuth(LoggerHandler):
@@ -81,6 +81,11 @@ class VKAuth(LoggerHandler):
             self.logger.info('Issued JWT: %s', token)
 
             return {'token': 'Bearer ' + token.decode("utf-8")}
+        except exceptions.HTTPError as e:
+            self.logger.info('Error authorizing user on VK: %s', e)
+            if e.response.status_code == 401:
+                raise HTTP_403('Error authorizing user on VK')
+            raise HTTPError(e.response.status_code, e.response.text)
         except VKException as e:
             self.logger.warning('Error authorizing user on VK: %s', e)
 
