@@ -1,7 +1,7 @@
 <template>
   <q-item :item="item">
     <q-item-section avatar>
-      <q-btn round @click="goto('t.me', source.uri)" title="Open channel">
+      <q-btn round :disable="!source.uri" @click="goto('t.me', source.uri)" title="Open channel">
         <q-avatar size="32px">
           <img v-if="source.photo" :src="source.photo"/>
           <img v-else src="~assets/Telegram_logo.svg"/>
@@ -19,7 +19,7 @@
       </q-item-label>
     </q-item-section>
     <q-item-section avatar>
-      <q-btn round  @click="goto('vk.com', target.uri)" title="Open group">
+      <q-btn round :disable="!target.uri"  @click="goto('vk.com', target.uri)" title="Open group">
         <q-avatar size="32px">
           <img v-if="target.photo" :src="target.photo"/>
           <img v-else src="~assets/VK_Blue_Logo.svg"/>
