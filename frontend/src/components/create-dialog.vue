@@ -62,8 +62,8 @@
       <q-separator />
 
       <q-card-actions align="right">
-        <q-btn stretch label="Cancel" @click="reset" v-close-dialog />
-        <q-btn stretch label="Create" color="primary" @click="submit" v-close-dialog />
+        <q-btn stretch label="Cancel" @click="reset" v-close-popup />
+        <q-btn stretch label="Create" color="primary" @click="submit" v-close-popup />
       </q-card-actions>
     </q-card>
   </q-dialog>
