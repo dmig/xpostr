@@ -7,7 +7,7 @@ class Connections(AuthorizedHandler):
     audience = 'authorized'
 
     def get(self):
-        return rpc_call('get_user_connections', self.user['id'])
+        return list(rpc_call('get_user_connections', self.user['id']))
 
     def post(self):
         vk_id = self.request.data.get('vk_id')
