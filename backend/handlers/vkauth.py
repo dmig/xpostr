@@ -80,7 +80,7 @@ class VKAuth(LoggerHandler):
 
             self.logger.info('Issued JWT: %s', token)
 
-            return {'ok': True, 'token': token.decode("utf-8")}
+            return {'token': 'Bearer ' + token.decode("utf-8")}
         except VKException as e:
             self.logger.warning('Error authorizing user on VK: %s', e)
 
