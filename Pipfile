@@ -19,6 +19,7 @@ requests = "*"
 telethon = "*"
 ujson = "*"
 uvloop = "*"
+pycnic = {git = "https://github.com/dmig/pycnic.git"}
 
 [requires]
 python_version = "3.7"

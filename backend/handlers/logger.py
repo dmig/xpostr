@@ -1,5 +1,5 @@
 import logging
-from lib.pycnic.core import Handler
+from pycnic.core import Handler
 
 class LoggerHandler(Handler):
     logger = None

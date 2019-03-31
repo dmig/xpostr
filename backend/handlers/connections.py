@@ -1,5 +1,5 @@
 from lib.rpc_client import rpc_call
-from lib.pycnic.errors import HTTP_400
+from pycnic.errors import HTTP_400
 from handlers.authorized import AuthorizedHandler
 
 

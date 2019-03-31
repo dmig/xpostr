@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "09df81f0229ed07319bbcff8e0137dbf54673cd0105910ee0f0437398f837f4b"
+            "sha256": "6cf0d51a91d63a4c5426a70528d3a23fe66e493bae25c4c02eca385ac5c49a38"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -239,6 +239,10 @@
                 "sha256:df9bc694cf03673878ea8ce674082c5acd134991d64d6c306d4bd61c0c1df98f"
             ],
             "version": "==3.0.0"
+        },
+        "pycnic": {
+            "git": "https://github.com/dmig/pycnic.git",
+            "ref": "229f3c82b4f4a7013802b44876abbe1313dc72fc"
         },
         "pycparser": {
             "hashes": [

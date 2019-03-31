@@ -5,7 +5,7 @@ from telethon.errors import SessionPasswordNeededError,\
     PhoneCodeExpiredError, PhoneCodeInvalidError, PhoneCodeEmptyError, \
     PhonePasswordProtectedError, PhonePasswordFloodError, FloodWaitError, FloodError
 from telethon.utils import parse_phone
-from lib.pycnic.errors import HTTP_400, HTTP_500, HTTPError
+from pycnic.errors import HTTP_400, HTTP_500, HTTPError
 from lib import db
 from lib.config import config
 from lib.rpc_client import rpc_call

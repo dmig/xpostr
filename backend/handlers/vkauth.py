@@ -3,7 +3,7 @@ from lib import jwt_auth
 from lib.config import config
 from lib.errors import VKException
 from lib.rpc_client import rpc_call
-from lib.pycnic.errors import HTTP_403, HTTP_500, HTTPError
+from pycnic.errors import HTTP_403, HTTP_500, HTTPError
 from handlers.logger import LoggerHandler
 
 class VKAuth(LoggerHandler):

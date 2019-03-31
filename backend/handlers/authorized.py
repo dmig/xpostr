@@ -1,4 +1,4 @@
-from lib.pycnic.errors import HTTP_401, HTTP_403, HTTP_500
+from pycnic.errors import HTTP_401, HTTP_403, HTTP_500
 from lib.rpc_client import rpc_call
 from lib import jwt_auth
 from handlers.logger import LoggerHandler

@@ -1,7 +1,7 @@
 #! /usr/bin/env python3
 # http://pycnic.nullism.com/docs/
 
-from lib.pycnic.core import WSGI
+from pycnic.core import WSGI
 from lib.config import config
 from handlers.vkauth import VKAuth
 from handlers.vkgroups import VKGroups
