@@ -14,7 +14,7 @@
         <div class="name-label col-2 text-center gt-xs">&LongRightArrow;</div>
         <div class="name-label ellipsis col-12 col-sm-5 text-right">{{target.title}}</div>
       </q-item-label>
-      <q-item-label caption v-if="item.last_status" class="text-blue-grey">
+      <q-item-label :lines="1" caption v-if="item.last_status" class="text-blue-grey">
         <span v-if="item.last_update" class="text-grey">{{item.last_update | formatTime}}</span> {{item.last_status}}
       </q-item-label>
     </q-item-section>
@@ -65,7 +65,11 @@ export default {
   },
   filters: {
     formatTime (ts) {
-      return (new Date(ts * 1000)).toLocaleString(navigator.language)
+      let d = new Date(ts * 1000), now = new Date().getTime()
+      if (Math.abs(now - ts * 1000) < 86400000) {
+        return d.toLocaleTimeString(navigator.language)
+      }
+      return d.toLocaleString(navigator.language)
     }
   },
   methods: {
