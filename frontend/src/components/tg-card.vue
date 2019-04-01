@@ -34,17 +34,22 @@
         </q-item-section>
       </q-item>
     </q-card-section>
-    <q-card-section v-if="showForm" class="q-px-xl">
-      <q-input v-model="tel" type="tel" mask="###############" label="Phone number" lazy-rules
-        :rules="[v => v.length > 8 || 'Please enter a phone number in international format']"
-        :readonly="loading||stage > 0"/>
-    </q-card-section>
-    <q-card-section v-if="stage > 0" class="q-px-xl">
-      <q-input v-model="code" type="text" mask="######" label="Confirmation code"
-        :readonly="loading||stage > 1"/>
-    </q-card-section>
-    <q-card-section v-if="stage > 1" class="q-px-xl">
-      <q-input v-model="pwd" type="password" label="2FA Password" :readonly="loading" />
+    <q-card-section v-if="showForm" class="row">
+      <q-list class="offset-md-4 col-md-4 offset-sm-3 col-sm-6 offset-xs-1 col-xs-10">
+        <q-item>
+          <q-input class="full-width" v-model="tel" type="tel" mask="###############" label="Phone number"
+            :rules="[v => v.length > 8 || 'Please enter a phone number in international format']" lazy-rules
+            :readonly="loading||stage > 0" @keyup.enter="login"/>
+        </q-item>
+        <q-item v-if="stage > 0">
+          <q-input class="full-width" v-model="code" type="text" mask="######" label="Confirmation code"
+            :readonly="loading||stage > 1" @keyup.enter="login"/>
+        </q-item>
+        <q-item v-if="stage > 1">
+          <q-input class="full-width" v-model="pwd" type="password" label="2FA Password"
+          :readonly="loading"  @keyup.enter="login"/>
+        </q-item>
+      </q-list>
     </q-card-section>
     <q-card-actions align="right" v-if="showForm">
       <q-btn id="submit-btn" color="primary" :loading="loading" @click="login">Submit</q-btn>
