@@ -110,7 +110,7 @@ def remove_client(vk_user_id: int):
         return
 
     _logger.debug('Disconnecting Telegram client for %d', vk_user_id)
-    client.disconnect()
+    asyncio.ensure_future(client.disconnect())
 
     del context.clients[vk_user_id]
 
