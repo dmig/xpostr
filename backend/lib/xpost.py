@@ -66,6 +66,7 @@ class Uploadable(Logger):
         self.logger.debug('POST %s %s', self.endpoint, postdata)
         async with self.session.post(self.endpoint, data=postdata) as resp:
             resp = await resp.json(loads=ujson.loads)
+            self.logger.log(logging.DEBUG - 5, 'POST %s response: %s', self.endpoint, resp)
 
             if resp.get('error'):
                 raise VKException(resp)
@@ -132,6 +133,7 @@ class Doc(Uploadable):
         self.logger.debug('POST %s %s', self.endpoint, postdata)
         async with self.session.post(self.endpoint, data=postdata) as resp:
             resp = await resp.json(loads=ujson.loads)
+            self.logger.log(logging.DEBUG - 5, 'POST %s response: %s', self.endpoint, resp)
 
             if resp.get('error'):
                 raise VKException(resp)
@@ -148,6 +150,7 @@ class Doc(Uploadable):
             async with self.session.post(upload_url, data=formdata) as resp:
                 try:
                     resp = await resp.json(content_type=None, loads=ujson.loads)
+                    self.logger.log(logging.DEBUG - 5, 'POST %s response: %s', upload_url, resp)
                 except aiohttp.client_exceptions.ContentTypeError:
                     self.logger.error('Invalid response: %s', await resp.text())
                     return None
@@ -165,6 +168,7 @@ class Doc(Uploadable):
         self.logger.debug('POST %s %s', self.endpoint1, save_ticket)
         async with self.session.post(self.endpoint1, data=save_ticket) as resp:
             resp = await resp.json(loads=ujson.loads)
+            self.logger.log(logging.DEBUG - 5, 'POST %s response: %s', self.endpoint1, resp)
 
             if resp.get('error'):
                 raise VKException(resp)
@@ -179,7 +183,7 @@ class Photo(Doc):
     _field_name = 'photo'
 
     def _get_id(self, response):
-        self.logger.debug('Photo upload response: %s', response)
+        self.logger.log(logging.DEBUG - 5, 'Photo upload response: %s', response)
         el = next(iter(response.get('response', [])))
         self.owner_id = el.get('owner_id')
         return el.get('id') if el else None
@@ -205,6 +209,7 @@ class Video(Doc):
         self.logger.debug('POST %s %s', self.endpoint, postdata)
         async with self.session.post(self.endpoint, data=postdata) as resp:
             resp = await resp.json(loads=ujson.loads)
+            self.logger.log(logging.DEBUG - 5, 'POST %s response: %s', self.endpoint, resp)
 
             if resp.get('error'):
                 raise VKException(resp)
@@ -222,6 +227,7 @@ class Video(Doc):
             async with self.session.post(upload_url, data=formdata) as resp:
                 try:
                     resp = await resp.json(content_type=None, loads=ujson.loads)
+                    self.logger.log(logging.DEBUG - 5, 'POST %s response: %s', upload_url, resp)
                 except aiohttp.client_exceptions.ContentTypeError:
                     self.logger.error('Invalid response: %s', await resp.text())
                     return None
