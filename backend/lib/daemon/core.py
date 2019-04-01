@@ -88,6 +88,7 @@ async def get_client(vk_user_id: int, event_loop=None) -> Awaitable[TelegramClie
     if event_loop is None:
         event_loop = asyncio.get_event_loop()
 
+    _logger.debug('Creating client for VK user %d', vk_user_id)
     context.clients[vk_user_id] = client = TelegramClient(
         os.path.join(config.get('paths', 'sessions'), parse_phone(phone_number)),
         config.get('telegram', 'api_id'),
@@ -207,7 +208,6 @@ def init(event_loop: asyncio.AbstractEventLoop):
     clients = []
     conns = []
     for conn in cursor.fetchall():
-        _logger.debug('Creating client for VK user %d', conn['vk_user_id'])
         clients.append(asyncio.ensure_future(
             get_client(conn['vk_user_id'], event_loop), loop=event_loop
         ))
@@ -260,11 +260,13 @@ def init(event_loop: asyncio.AbstractEventLoop):
         ], loop=event_loop))
 
 def shutdown():
+    _logger.debug(
+        'Shutting down %d clients and %d connections',
+        len(context.clients), len(context.connections)
+    )
     for vk_user_id in context.connections:
         while context.connections[vk_user_id]:
             # shift() imitation
             conn = context.connections[vk_user_id][0]
             remove_connection(vk_user_id, conn)
-            _logger.debug('Clients: %s', context.clients)
-            _logger.debug('Connections: %s', context.connections)
 #endregion
