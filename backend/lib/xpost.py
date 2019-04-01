@@ -45,8 +45,8 @@ class Uploadable(Logger):
         self.group_id = group_id
 
     def __str__(self):
-        # if not self.media_id:
-        #     return None
+        if not self.media_id:
+            return ''
 
         return self.__class__.__name__.lower() + \
             str(self.owner_id or -self.group_id) + '_' + str(self.media_id)
@@ -122,7 +122,11 @@ class Doc(Uploadable):
             filename = await self._download_media()
         except ConnectionError as e:
             self.logger.warning('Got connection error on download_media: "%s", retrying...', e)
-            filename = await self._download_media()
+            try:
+                filename = await self._download_media()
+            except ConnectionError:
+                self.logger.exception('Failed to download_media')
+                return None
 
         postdata = self._build_postdata()
         self.logger.debug('POST %s %s', self.endpoint, postdata)
