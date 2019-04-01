@@ -13,6 +13,7 @@ from lib import db
 from lib.config import config
 from lib.daemon import context
 from lib.daemon.core import get_client, logout_client, remove_connection, catch_task_exception
+from lib.daemon.handlers.vk import handle_set_phone_number as set_phone_number
 
 _logger = logging.getLogger(__name__)
 
@@ -80,7 +81,7 @@ async def handle_remove_tg_user(vk_user_id: int):
         db.del_group_connection(vk_user_id, conn.vk_id, conn.tg_id)
 
     await logout_client(vk_user_id)
-    db.set_phone_number(vk_user_id, None)
+    set_phone_number(vk_user_id, None)
     return True
 
 #region private funcs
