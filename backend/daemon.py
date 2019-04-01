@@ -4,30 +4,16 @@ import asyncio
 import logging
 import os
 import uvloop
-# import signal
 from aiorpc import serve
 from lib.config import config
 from lib.daemon import core, handlers
 
 logger = logging.getLogger('xpostr-daemon')
 
-async def shutdown(sgn, loop):
-    logger.info('Received exit signal %s, shutting down...', sgn.name)
-    tasks = [t for t in asyncio.Task.all_tasks() if t is not
-             asyncio.Task.current_task()]
-
-    [task.cancel() for task in tasks]
-
-    logger.info('Canceling outstanding tasks')
-    await asyncio.wait(*tasks)
-    loop.stop()
-    logger.info('Shutdown complete')
-
 if __name__ == "__main__":
     loop = uvloop.new_event_loop()
     assert loop is not None
     asyncio.set_event_loop(loop)
-    # loop.add_signal_handler()
 
     # preload data from DB
     # ... and create Telegram clients
