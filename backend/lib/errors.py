@@ -8,6 +8,7 @@ class VKException(Exception):
 # pylint: disable=multiple-statements
 class XPostrException(Exception): pass
 class MissingParam(Exception): pass
+class AuthorizedSuccessfully(XPostrException): pass
 class UnknownUser(XPostrException): pass
 class UnauthorizedException(XPostrException): pass
 class StartupException(XPostrException): pass

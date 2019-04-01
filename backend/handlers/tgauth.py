@@ -7,6 +7,7 @@ from telethon.errors import SessionPasswordNeededError,\
 from telethon.utils import parse_phone
 from pycnic.errors import HTTP_400, HTTP_500, HTTPError
 from lib import db
+from lib.errors import AuthorizedSuccessfully
 from lib.config import config
 from lib.rpc_client import rpc_call
 from handlers.telegram import TelegramHandler
@@ -21,7 +22,9 @@ class TGAuth(TelegramHandler):
         phone = parse_phone(self.request.data.get('phone'))
 
         if phone == self.user['phone_number']:
-            return self.get()
+            user = self.get()
+            if user.get('authorized', True):
+                return user
 
         code = self.request.data.get('code')
         password = self.request.data.get('password')
@@ -31,6 +34,7 @@ class TGAuth(TelegramHandler):
             raise HTTP_400('Invalid `phone` value')
 
         msg = None
+        is_authorized = False
         try:
             client = TelegramClient(
                 os.path.join(config.get('paths', 'sessions'), parse_phone(phone)),
@@ -42,7 +46,9 @@ class TGAuth(TelegramHandler):
 
             # check if already authorized
             if client.is_user_authorized():
-                return self._authorized(phone)
+                self._set_authorized(phone)
+                is_authorized = True
+                raise AuthorizedSuccessfully()
 
             # 2nd step
             if code:
@@ -57,7 +63,9 @@ class TGAuth(TelegramHandler):
 
             # 2nd/3rd step success
             if code and client.is_user_authorized():
-                return self._authorized(phone)
+                self._set_authorized(phone)
+                is_authorized = True
+                raise AuthorizedSuccessfully()
 
             # 1st step
             if not resp.phone_registered:
@@ -72,7 +80,8 @@ class TGAuth(TelegramHandler):
                 'authorized': False,
                 'code': True
             }
-        # TODO handle potential sqlite connection timeout
+        except AuthorizedSuccessfully:
+            pass
         except SessionPasswordNeededError:
             return {
                 'authorized': False,
@@ -93,6 +102,9 @@ class TGAuth(TelegramHandler):
         finally:
             client.disconnect()
 
+        if is_authorized:
+            return self.get()
+
         raise HTTP_500('Internal error', msg)
 
     def delete(self):
@@ -103,7 +115,7 @@ class TGAuth(TelegramHandler):
         return ''
 
 
-    def _authorized(self, phone):
+    def _set_authorized(self, phone):
         db.del_interim_state(phone)
         rpc_call('set_phone_number', self.user['id'], phone)
-        return self.get()
+        return True
