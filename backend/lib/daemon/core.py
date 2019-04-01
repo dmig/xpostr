@@ -201,6 +201,13 @@ def init(event_loop: asyncio.AbstractEventLoop):
     if exc:
         raise errors.StartupException('Failed to initalize clients')
 
+    # precache dialogs, not to get ValueError when calling get_entity
+    dialogs = []
+    for cl in context.clients.values():
+        dialogs.append(asyncio.ensure_future(cl.get_dialogs()))
+
+    event_loop.run_until_complete(asyncio.wait(dialogs))
+
     if conns:
         event_loop.run_until_complete(asyncio.wait(conns))
 
