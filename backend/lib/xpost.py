@@ -118,7 +118,11 @@ class Doc(Uploadable):
 
         self.logger.debug('Uploading %r', self)
 
-        filename = await self._download_media()
+        try:
+            filename = await self._download_media()
+        except ConnectionError as e:
+            self.logger.warning('Got connection error on download_media: "%s", retrying...', e)
+            filename = await self._download_media()
 
         postdata = self._build_postdata()
         self.logger.debug('POST %s %s', self.endpoint, postdata)
