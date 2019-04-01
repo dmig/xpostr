@@ -86,7 +86,7 @@ async def get_client(vk_user_id: int, event_loop=None) -> Awaitable[TelegramClie
 
         return client
     except:
-        client.disconnect()
+        await client.disconnect()
         raise
 
 def remove_client(vk_user_id: int):
