@@ -112,6 +112,8 @@ export default {
         .catch(this.$errorNotify)
     },
     reload: function () {
+      if (!this.user.authorized) return
+
       this.loading = true
       Promise.all([
         this.$store.dispatch('tguser/load'),
@@ -121,7 +123,7 @@ export default {
     }
   },
   mounted () {
-    if (!this.user.fullname) this.reload()
+    if (this.user.authorized && !this.user.fullname) this.reload()
   }
 }
 </script>
