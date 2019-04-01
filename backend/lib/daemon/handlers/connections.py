@@ -10,21 +10,8 @@ from lib.daemon.core import get_connection, add_connection, remove_connection
 
 _logger = logging.getLogger(__name__)
 
-async def handle_get_connections(vk_user_id: int):
-    vk_user_id = int(vk_user_id)
-    lst = context.connections.get(vk_user_id)
-
-    if lst is None:
-        lst = context.connections[vk_user_id] = []
-        conns = []
-        for c in db.get_group_connections(vk_user_id):
-            conn = Connection(**c)
-            if c['active']:
-                conns.append(add_connection(vk_user_id, conn))
-
-        await asyncio.wait(conns)
-
-    return lst
+def handle_get_connections(vk_user_id: int):
+    return [{c:conn[c] for c in conn.keys()} for conn in db.get_group_connections(vk_user_id)]
 
 async def handle_set_connection(vk_user_id: int, vk_group_id: int, tg_channel_id: int, active=True):
     vk_user_id = int(vk_user_id)
