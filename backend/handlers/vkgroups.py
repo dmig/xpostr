@@ -6,4 +6,6 @@ class VKGroups(AuthorizedHandler):
     audience = 'authorized'
 
     def get(self):
-        return list(rpc_call('get_targets', self.user['id'], timeout=5))
+        res = list(rpc_call('get_targets', self.user['id'], timeout=5))
+        res.sort(key=lambda item: item['title'])
+        return res
