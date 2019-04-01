@@ -9,11 +9,8 @@ from hashlib import md5
 from typing import Union, List, Tuple
 from telethon import TelegramClient
 from telethon.tl import types
-from lib import db
 from lib.config import config
-from lib.daemon import context
-from lib.daemon.core import get_client, logout_client, remove_connection, catch_task_exception
-from lib.daemon.handlers.vk import handle_set_phone_number as set_phone_number
+from lib.daemon.core import get_client, catch_task_exception, remove_tg_user
 
 _logger = logging.getLogger(__name__)
 
@@ -71,18 +68,7 @@ async def handle_get_tg_user(vk_user_id: int):
     }
 
 async def handle_remove_tg_user(vk_user_id: int):
-    vk_user_id = int(vk_user_id)
-    client: TelegramClient = context.clients.get(vk_user_id)
-    if not client:
-        return False
-
-    for conn in context.connections.get(vk_user_id, []):
-        remove_connection(vk_user_id, conn)
-        db.del_group_connection(vk_user_id, conn.vk_id, conn.tg_id)
-
-    await logout_client(vk_user_id)
-    set_phone_number(vk_user_id, None)
-    return True
+    return await remove_tg_user(int(vk_user_id))
 
 #region private funcs
 async def _get_photo(client: TelegramClient, entity: Union[types.User, types.Channel, types.Chat]):

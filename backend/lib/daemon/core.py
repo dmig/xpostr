@@ -126,6 +126,32 @@ async def logout_client(vk_user_id: int):
     remove_client(vk_user_id)
 
 
+def set_phone_number(vk_user_id: int, phone_number):
+    acct = context.accounts.get(vk_user_id)
+
+    if not acct:
+        _logger.warning('User not found: %d', vk_user_id)
+        return False
+
+    acct['phone_number'] = phone_number
+
+    db.set_phone_number(vk_user_id, phone_number)
+    return True
+
+
+async def remove_tg_user(vk_user_id: int):
+    client: TelegramClient = context.clients.get(vk_user_id)
+    if not client:
+        return False
+
+    for conn in context.connections.get(vk_user_id, []):
+        remove_connection(vk_user_id, conn)
+        db.del_group_connection(vk_user_id, conn.vk_id, conn.tg_id)
+
+    await logout_client(vk_user_id)
+    set_phone_number(vk_user_id, None)
+    return True
+
 
 def catch_task_exception(task: asyncio.Task):
     exc = task.exception()

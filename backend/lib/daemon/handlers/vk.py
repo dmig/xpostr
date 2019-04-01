@@ -7,7 +7,7 @@ import aiohttp
 import ujson
 from lib import db
 from lib.daemon import context
-from lib.daemon.handlers.tg import handle_remove_tg_user as remove_tg_user
+from lib.daemon.core import remove_tg_user, set_phone_number
 
 _logger = logging.getLogger(__name__)
 
@@ -46,18 +46,7 @@ def handle_remove_vk_user(vk_user_id):
     return True
 
 def handle_set_phone_number(vk_user_id, phone_number):
-    vk_user_id = int(vk_user_id)
-    acct = context.accounts.get(vk_user_id)
-
-    if not acct:
-        _logger.warning('User not found: %d', vk_user_id)
-        return False
-
-    acct['phone_number'] = phone_number
-
-    db.set_phone_number(vk_user_id, phone_number)
-
-    return True
+    return set_phone_number(int(vk_user_id), phone_number)
 
 async def handle_get_targets(vk_user_id):
     vk_user_id = int(vk_user_id)
