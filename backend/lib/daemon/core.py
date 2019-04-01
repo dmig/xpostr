@@ -60,6 +60,16 @@ def get_connection(vk_user_id: int, vk_group_id: int, tg_channel_id: int, load=F
                 return Connection(**conn)
         return conn
 
+def set_connection_status(vk_user_id: int, vk_group_id: int, tg_channel_id: int, status):
+    conn = get_connection(vk_user_id, vk_group_id, tg_channel_id)
+
+    conn.last_status = status # pylint: disable=attribute-defined-outside-init
+    conn.last_update = time() # pylint: disable=attribute-defined-outside-init
+
+    _logger.debug('Set connection status %s', conn)
+
+    db.set_group_connection_status(vk_user_id, vk_group_id, tg_channel_id, status)
+
 
 async def get_client(vk_user_id: int, event_loop=None) -> Awaitable[TelegramClient]:
     vk_user_id = int(vk_user_id)
@@ -104,7 +114,6 @@ def remove_client(vk_user_id: int):
 
     del context.clients[vk_user_id]
 
-
 async def logout_client(vk_user_id: int):
     client: TelegramClient = context.clients.get(vk_user_id)
     if not client:
@@ -116,6 +125,14 @@ async def logout_client(vk_user_id: int):
     await client.log_out()
     remove_client(vk_user_id)
 
+
+
+def catch_task_exception(task: asyncio.Task):
+    exc = task.exception()
+    if not exc:
+        return False
+    _logger.exception('Task exception: %r', exc, stack_info=task.get_stack())
+    return True
 
 async def _repost_message(vk_user_id: int, vk_group_id: int, event):
     access_token = context.accounts.get(vk_user_id, {}).get('access_token')
@@ -134,25 +151,6 @@ async def _repost_message(vk_user_id: int, vk_group_id: int, event):
 
     await event.client.send_read_acknowledge(msg.to_id, message=msg)
     set_connection_status(vk_user_id, vk_group_id, msg.to_id.channel_id, status)
-
-
-def set_connection_status(vk_user_id: int, vk_group_id: int, tg_channel_id: int, status):
-    conn = get_connection(vk_user_id, vk_group_id, tg_channel_id)
-
-    conn.last_status = status # pylint: disable=attribute-defined-outside-init
-    conn.last_update = time() # pylint: disable=attribute-defined-outside-init
-
-    _logger.debug('Set connection status %s', conn)
-
-    db.set_group_connection_status(vk_user_id, vk_group_id, tg_channel_id, status)
-
-
-def catch_task_exception(task: asyncio.Task):
-    exc = task.exception()
-    if not exc:
-        return False
-    _logger.exception('Task exception: %r', exc, stack_info=task.get_stack())
-    return True
 
 
 #region init and shutdown
