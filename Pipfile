@@ -10,13 +10,13 @@ uwsgi = "*"
 [packages]
 aiodns = "*"
 aiohttp = "*"
-aiorpc = {editable = true,git = "https://github.com/dmig/aiorpc.git"}
+aiorpc = {git = "https://github.com/dmig/aiorpc.git"}
 cchardet = "*"
 cryptg = "*"
 isort = "*"
 pyjwt = "*"
 requests = "*"
-telethon = "*"
+telethon = {git = "https://github.com/LonamiWebs/Telethon.git"}
 ujson = "*"
 uvloop = "*"
 pycnic = {git = "https://github.com/dmig/pycnic.git"}

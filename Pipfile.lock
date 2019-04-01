@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "6cf0d51a91d63a4c5426a70528d3a23fe66e493bae25c4c02eca385ac5c49a38"
+            "sha256": "e9029ed52e66c048d834c22b67d4147576f7f7e117e8004dfad303a9e90f1c87"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -53,7 +53,6 @@
             "version": "==3.5.4"
         },
         "aiorpc": {
-            "editable": true,
             "git": "https://github.com/dmig/aiorpc.git",
             "ref": "05fd0b2fa3e23446cc09b8330f1636d3b38c1377"
         },
@@ -169,12 +168,6 @@
             "index": "pypi",
             "version": "==4.3.16"
         },
-        "msgpack-python": {
-            "hashes": [
-                "sha256:378cc8a6d3545b532dfd149da715abae4fda2a3adb6d74e525d0d5e51f46909b"
-            ],
-            "version": "==0.5.6"
-        },
         "multidict": {
             "hashes": [
                 "sha256:024b8129695a952ebd93373e45b5d341dbb87c17ce49637b34000093f243dd4f",
@@ -208,19 +201,6 @@
                 "sha256:db603a1c235d110c860d5f39988ebc8218ee028f07a7cbc056ba6424372ca31b"
             ],
             "version": "==4.5.2"
-        },
-        "pyaes": {
-            "hashes": [
-                "sha256:02c1b1405c38d3c370b085fb952dd8bea3fadcee6411ad99f312cc129c536d8f"
-            ],
-            "version": "==1.6.1"
-        },
-        "pyasn1": {
-            "hashes": [
-                "sha256:da2420fe13a9452d8ae97a0e478adde1dee153b11ba832a95b223a2ba01c10f7",
-                "sha256:da6b43a8c9ae93bc80e2739efb38cc776ba74a886e3e9318d65fe81a8b8a2c6e"
-            ],
-            "version": "==0.4.5"
         },
         "pycares": {
             "hashes": [
@@ -266,19 +246,9 @@
             "index": "pypi",
             "version": "==2.21.0"
         },
-        "rsa": {
-            "hashes": [
-                "sha256:14ba45700ff1ec9eeb206a2ce76b32814958a98e372006c8fb76ba820211be66",
-                "sha256:1a836406405730121ae9823e19c6e806c62bbad73f890574fff50efa4122c487"
-            ],
-            "version": "==4.0"
-        },
         "telethon": {
-            "hashes": [
-                "sha256:28fc98cc912075b9ae9a8d0548153b7c87ebc2a8f8fe6ec3ca600c06e42b901c"
-            ],
-            "index": "pypi",
-            "version": "==1.6.2"
+            "git": "https://github.com/LonamiWebs/Telethon.git",
+            "ref": "34a8140ff031e73998d72e453dae67f367a62e92"
         },
         "ujson": {
             "hashes": [
