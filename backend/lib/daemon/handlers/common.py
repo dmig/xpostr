@@ -20,5 +20,5 @@ async def handle_repost_message(vk_user_id: int, vk_group_id: int, tg_channel_id
     _logger.info('Found message: %s', message)
 
     asyncio.ensure_future(repost_message(vk_user_id, vk_group_id, message))\
-        .add_done_callback(lambda: _logger.info('Repost done...'))
+        .add_done_callback(lambda _: _logger.info('Repost done...'))
     return True
