@@ -191,7 +191,12 @@ def init(event_loop: asyncio.AbstractEventLoop):
 
     exc = False
     for cl in clients:
-        exc |= catch_task_exception(cl)
+        if catch_task_exception(cl):
+            ex = cl.exception()
+            if isinstance(ex, errors.UnauthorizedException):
+                _logger.warning(str(ex))
+            else:
+                exc |= True
 
     if exc:
         raise errors.StartupException('Failed to initalize clients')
