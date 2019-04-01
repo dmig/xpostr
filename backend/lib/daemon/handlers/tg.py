@@ -16,6 +16,17 @@ from lib.daemon.core import get_client, logout_client, remove_connection, catch_
 
 _logger = logging.getLogger(__name__)
 
+async def handle_dump_message(vk_user_id: int, tg_channel_id: int, *message_ids):
+    c = await get_client(vk_user_id)
+    await c.get_dialogs()
+
+    ret = [m.to_dict() if m else m async for m in c.iter_messages(
+        await c.get_entity(int(tg_channel_id)),
+        ids=list(map(int, message_ids))
+    )]
+
+    return ret
+
 async def handle_get_sources(vk_user_id: int):
     client = await get_client(vk_user_id)
 
