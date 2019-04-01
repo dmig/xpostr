@@ -284,7 +284,10 @@ class Url:
     title = None
 
     def __init__(self, url, title=None):
+        if url.startswith('http'):
         self.url = url
+        else:
+            self.url = 'http://' + url
         self.title = title
 
     def __str__(self):
