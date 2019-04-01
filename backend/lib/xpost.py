@@ -1,3 +1,4 @@
+import asyncio
 import logging
 import re
 import os
@@ -357,6 +358,9 @@ class WallPost(Uploadable):
         # or add link to message itself
         elif self.source.to_id and self.source.to_id.channel_id:
             self._add_fwd_from(self.source.to_id.channel_id, self.source.id)
+
+    def __del__(self):
+        asyncio.ensure_future(self.session.close())
 
     def _add_fwd_from(self, channel_id, channel_post):
         if self.fwd == FWD_NONE:
