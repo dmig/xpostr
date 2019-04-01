@@ -10,7 +10,7 @@ from lib.daemon.core import get_connection, add_connection, remove_connection
 
 _logger = logging.getLogger(__name__)
 
-async def handle_get_user_connections(vk_user_id: int):
+async def handle_get_connections(vk_user_id: int):
     vk_user_id = int(vk_user_id)
     lst = context.connections.get(vk_user_id)
 
