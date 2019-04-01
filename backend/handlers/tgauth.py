@@ -1,5 +1,5 @@
 import os
-from telethon import TelegramClient
+from telethon import TelegramClient, sync
 from telethon.errors import SessionPasswordNeededError,\
     PhoneNumberBannedError, PhoneNumberInvalidError,\
     PhoneCodeExpiredError, PhoneCodeInvalidError, PhoneCodeEmptyError, \
