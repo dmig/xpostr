@@ -57,6 +57,9 @@ def get_connection(vk_user_id: int, vk_group_id: int, tg_channel_id: int, load=F
         if load:
             cn = db.get_group_connection(vk_user_id, vk_group_id, tg_channel_id)
             if cn:
+                _logger.debug(
+                    'Loaded connection from db: %d, %d, %d', vk_user_id, vk_group_id, tg_channel_id
+                )
                 return Connection(**cn)
         return conn
 
