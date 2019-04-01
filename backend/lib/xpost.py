@@ -508,17 +508,22 @@ class WallPost(Uploadable):
             return False
 
         if text_urls:
+            # add_surrogate/del_surrogate are used by Telethon internally in
+            # get_entities_text -> get_inner_text to get correct offsets in unicode
+            raw_text = add_surrogate(self.source.raw_text)
+
             msg = []
             prev = 0
             for tu in text_urls:
-                title = self.source.raw_text[prev:(tu.offset + tu.length)]
+                title = raw_text[prev:(tu.offset + tu.length)]
                 # link titles to telegraph photos look like \u200b\u200b
                 if _ZERO_CHARS.match(title):
                     continue
                 msg.append(title)
                 msg.append(' (' + tu.url + ') ')
                 prev = tu.offset + tu.length
-            msg.append(self.source.raw_text[prev:])
+            msg.append(del_surrogate(raw_text[prev:]))
+            del raw_text
 
             params['message'] = ''.join(msg)
         else:
