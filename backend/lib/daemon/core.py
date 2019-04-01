@@ -5,7 +5,7 @@ import os
 from time import time
 from typing import Awaitable
 from telethon.utils import parse_phone
-from telethon import TelegramClient, events
+from telethon import TelegramClient, events, types
 from lib import db, xpost, errors
 from lib.config import config
 from lib.daemon import context
@@ -171,7 +171,7 @@ async def repost_message(vk_user_id: int, vk_group_id: int, event):
         _logger.error('Can\'t repost: %d `access_token` is missing', vk_user_id)
         return
 
-    msg = event.message
+    msg = event if isinstance(event, types.Message) else event.message
     try:
         xposter = xpost.WallPost(access_token, vk_group_id, msg)
         m_id = await xposter.upload()
