@@ -183,6 +183,21 @@ def get_group_connections(user_id):
 
     return res
 
+def get_group_connection(user_id, vk_id, tg_id):
+    cursor = get_cursor()
+
+    cursor.execute(
+        'SELECT vk_id, tg_id, active, last_status, last_update '
+        'FROM group_connections '
+        'WHERE user_id = ? AND tg_id = ? AND vk_id = ?',
+        (user_id, tg_id, vk_id)
+    )
+
+    res = cursor.fetchone()
+    cursor.close()
+
+    return res
+
 def set_group_connection(user_id, vk_id, tg_id, active=True):
     cursor = get_cursor()
 

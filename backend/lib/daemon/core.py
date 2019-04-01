@@ -43,7 +43,7 @@ def remove_connection(vk_user_id, connection):
     if not context.connections[vk_user_id]:
         remove_client(vk_user_id)
 
-def get_connection(vk_user_id: int, vk_group_id: int, tg_channel_id: int) -> Connection:
+def get_connection(vk_user_id: int, vk_group_id: int, tg_channel_id: int, load=False) -> Connection:
     vk_user_id = int(vk_user_id)
     vk_group_id = int(vk_group_id)
     tg_channel_id = int(tg_channel_id)
@@ -54,6 +54,10 @@ def get_connection(vk_user_id: int, vk_group_id: int, tg_channel_id: int) -> Con
         i = lst.index(conn)
         return lst[i]
     except ValueError:
+        if load:
+            conn = db.get_group_connection(vk_user_id, vk_group_id, tg_channel_id)
+            if conn:
+                return Connection(**conn)
         return conn
 
 

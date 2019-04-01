@@ -31,7 +31,7 @@ async def handle_set_connection(vk_user_id: int, vk_group_id: int, tg_channel_id
     vk_user_id = int(vk_user_id)
     vk_group_id = int(vk_group_id)
     tg_channel_id = int(tg_channel_id)
-    conn = get_connection(vk_user_id, vk_group_id, tg_channel_id)
+    conn = get_connection(vk_user_id, vk_group_id, tg_channel_id, True)
 
     if conn.active == active:
         _logger.warning('Duplicate connection: %s', conn)
