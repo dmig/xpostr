@@ -67,7 +67,7 @@
             <q-input v-model="code" type="url" color="grey-10" class="full-width" ref="code-input"
               label="Copy that address and paste it here to finish the login process"
               lazy-rules :rules="[this.validateUrl]"
-              @change="proceed" @focus="stage2"/>
+              @change="proceed" @focus="stage2" @keyup.enter="proceed"/>
           </q-item-section>
         </q-item>
         <q-item>
