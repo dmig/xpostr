@@ -21,4 +21,4 @@ if command not in commands:
     print(' Unknown command {}'.format(command))
     exit(2)
 
-pprint(rpc_call(command, *sys.argv[2:]))
+pprint(rpc_call(command, *sys.argv[2:], timeout=30))
