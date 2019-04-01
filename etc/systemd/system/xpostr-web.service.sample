@@ -1,0 +1,16 @@
+[Unit]
+Description=XPostr web services
+After=network.target
+
+[Service]
+# change User/Group to user you wish to run from (www-data f.e.)
+User=YOUR-USER
+Group=YOUR-USER
+# replace /PROJECT_PATH with full path to project code
+WorkingDirectory=/PROJECT_PATH/xpostr/backend
+# replace /PROJECT_PATH with full path to your virtualenv (`pipenv --venv` may show this)
+Environment="PATH=/PROJECT_PATH/bin"
+ExecStart=uwsgi uwsgi-prod.ini
+Restart=on-failure
+StandardOutput=append:/var/log/xpostr-web.log
+StandardError=append:/var/log/xpostr-web.log
