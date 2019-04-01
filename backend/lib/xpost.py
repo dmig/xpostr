@@ -300,9 +300,13 @@ class Fwd(Url, Uploadable):
         self.post_id = post_id
 
     async def upload(self):
-        entity = await self.client.get_entity(self.group_id)
-        if entity.username:
-            self.url = 'https://t.me/{}/{}'.format(entity.username, self.post_id)
+        try:
+            # HACK self.group_id is Peer
+            entity = await self.client.get_entity(self.group_id)
+            if entity.username:
+                self.url = 'https://t.me/{}/{}'.format(entity.username, self.post_id)
+        except ValueError:
+            self.logger.info('Couldn\'t get entity for %d', self.group_id)
 
         return self.url
 
@@ -353,29 +357,30 @@ class WallPost(Uploadable):
 
         # NOTE last attachment is more significant, so telegram link will be ignored
         # if any other present
-        if self.source.fwd_from and self.source.fwd_from.channel_id:
-            self._add_fwd_from(self.source.fwd_from.channel_id, self.source.fwd_from.channel_post)
+        if self.source.fwd_from:
+            self._add_fwd_from(self.source.fwd_from, self.source.fwd_from.channel_post)
         # or add link to message itself
-        elif self.source.to_id and self.source.to_id.channel_id:
-            self._add_fwd_from(self.source.to_id.channel_id, self.source.id)
+        elif self.source.to_id:
+            self._add_fwd_from(self.source.to_id, self.source.id)
 
     def __del__(self):
         asyncio.ensure_future(self.session.close())
 
-    def _add_fwd_from(self, channel_id, channel_post):
+
+    def _add_fwd_from(self, channel, channel_post):
         if self.fwd == FWD_NONE:
             return
 
         if self.fwd == FWD_ATTACH:
             self.attachments.insert(
                 0, Fwd(
-                    self.session, self.default_params, channel_id, channel_post, self.source.client
+                    self.session, self.default_params, channel, channel_post, self.source.client
                 )
             )
             return
 
         # TODO resolve channel_id into username to make a valid link
-        link = '\n\nhttps://t.me/' + channel_id + '/' + channel_post
+        link = '\n\nhttps://t.me/' + channel.channel_id + '/' + channel_post
         self.source.entities.append(
             types.MessageEntityUrl(len(self.source.raw_text) + 2, len(link) - 2)
         )
