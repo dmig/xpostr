@@ -392,20 +392,11 @@ class WallPost(Uploadable):
         if self.fwd == FWD_NONE:
             return
 
-        if self.fwd == FWD_ATTACH:
-            self.attachments.insert(
-                0, Fwd(
-                    self.session, self.default_params, channel, channel_post, self.source.client
-                )
+        self.attachments.insert(
+            0, Fwd(
+                self.session, self.default_params, channel, channel_post, self.source.client
             )
-            return
-
-        # TODO resolve channel_id into username to make a valid link
-        link = '\n\nhttps://t.me/' + channel.channel_id + '/' + channel_post
-        self.source.entities.append(
-            types.MessageEntityUrl(len(self.source.raw_text) + 2, len(link) - 2)
         )
-        self.source.text += link
 
     def _process_rich_text(self):
         min_length = config.getint('xpost', 'rich_text_min_length', fallback=256)
@@ -473,22 +464,38 @@ class WallPost(Uploadable):
         if not self.source.text:
             return False
 
+        append_from = self.fwd == FWD_APPEND
+        fwd = None
         for att in reversed(self.attachments):
+            if append_from and isinstance(att, Fwd):
+                fwd = _type_in_list(reversed(self.attachments), Fwd)
+
+                # Fwd.url is already resolved here
+                self.source.entities.append(
+                    types.MessageEntityUrl(len(self.source.raw_text) + 2, len(fwd.url) - 2)
+                )
+                self.source.text += '\n\n' + fwd.url
+                append_from = False
+                continue
+
             if not isinstance(att, Url):
                 continue
+
             if self.source.text == str(att.url):
                 if att.title:
                     params['message'] = att.title
                 return True
 
+        if fwd:
+            self.attachments.remove(fwd)
+
         text_urls = []
-        for e in self.source.entities or []:
+        for e, inner_text in self.source.get_entities():
             # NOTE no MessageEntityMentionName usage examples/documentation available
             # so assume it is same as MessageEntityMention
             if isinstance(e, (types.MessageEntityMention, types.MessageEntityMentionName)):
                 text_urls.append(types.MessageEntityTextUrl(
-                    e.offset, e.length,
-                    'https://t.me/' + self.source.raw_text[e.offset + 1:e.offset + e.length]
+                    e.offset, e.length, 'https://t.me/' + inner_text[1:]
                 ))
                 continue
             if isinstance(e, types.MessageEntityTextUrl):
