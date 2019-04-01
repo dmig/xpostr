@@ -490,7 +490,7 @@ class WallPost(Uploadable):
             self.attachments.remove(fwd)
 
         text_urls = []
-        for e, inner_text in self.source.get_entities():
+        for e, inner_text in self.source.get_entities_text():
             # NOTE no MessageEntityMentionName usage examples/documentation available
             # so assume it is same as MessageEntityMention
             if isinstance(e, (types.MessageEntityMention, types.MessageEntityMentionName)):
