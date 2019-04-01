@@ -177,6 +177,7 @@ export default {
           this.loading = false
           this.stage = 0
           this.code = ''
+          this.open = false
           this.$refs['code-input'].resetValidation()
         })
     },
