@@ -188,27 +188,32 @@ def init(event_loop: asyncio.AbstractEventLoop):
 
     cursor.execute(
         'SELECT id, fullname, photo, phone_number, access_token FROM vk_users '
-        'WHERE phone_number AND access_token'
+        'WHERE phone_number IS NOT NULL AND phone_number != ""'
+        'AND access_token IS NOT NULL AND access_token != ""'
     )
     for acc in cursor.fetchall():
+        _logger.debug('Creating account for VK user %d', acc['id'])
         context.accounts[acc['id']] = {f:acc[f] for f in acc.keys()}
 
     cursor.execute(
-        'SELECT user_id vk_user_id, tg_id, active, vk_id, '
-        'last_update, last_status '
+        'SELECT user_id vk_user_id, tg_id, active, vk_id, last_update, last_status '
         'FROM group_connections gc '
         'JOIN vk_users vu ON gc.user_id=vu.id '
-        'WHERE vu.phone_number AND vu.access_token'
+        'WHERE vu.phone_number IS NOT NULL AND vu.phone_number != "" '
+        'AND vu.access_token IS NOT NULL AND vu.access_token != ""'
     )
 
     clients = []
     conns = []
     for conn in cursor.fetchall():
-        # _logger.debug('Creating client for VK user %d', conn['vk_user_id'])
-        clients.append(asyncio.ensure_future(get_client(conn['vk_user_id'], event_loop)))
+        _logger.debug('Creating client for VK user %d', conn['vk_user_id'])
+        clients.append(asyncio.ensure_future(
+            get_client(conn['vk_user_id'], event_loop), loop=event_loop
+        ))
         if conn['active']:
+            _logger.debug('Creating connection: %d -> %d ', conn['tg_id'], conn['vk_id'])
             conns.append(asyncio.ensure_future(
-                add_connection(conn['vk_user_id'], Connection(**conn))
+                add_connection(conn['vk_user_id'], Connection(**conn)), loop=event_loop
             ))
 
     cursor.close()
@@ -217,7 +222,7 @@ def init(event_loop: asyncio.AbstractEventLoop):
         return
 
     # make sure to initialize clients first, because we're outside of event_loop
-    event_loop.run_until_complete(asyncio.wait(clients))
+    event_loop.run_until_complete(asyncio.wait(clients, loop=event_loop))
 
     exc = False
     for cl in clients:
@@ -234,12 +239,12 @@ def init(event_loop: asyncio.AbstractEventLoop):
     # precache dialogs, not to get ValueError when calling get_entity
     dialogs = []
     for cl in context.clients.values():
-        dialogs.append(asyncio.ensure_future(cl.get_dialogs()))
+        dialogs.append(asyncio.ensure_future(cl.get_dialogs(), loop=event_loop))
 
-    event_loop.run_until_complete(asyncio.wait(dialogs))
+    event_loop.run_until_complete(asyncio.wait(dialogs, loop=event_loop))
 
     if conns:
-        event_loop.run_until_complete(asyncio.wait(conns))
+        event_loop.run_until_complete(asyncio.wait(conns, loop=event_loop))
 
     exc = False
     for c in conns:
@@ -251,7 +256,7 @@ def init(event_loop: asyncio.AbstractEventLoop):
     if config.getboolean('telegram', 'catch_up', fallback=True):
         event_loop.run_until_complete(asyncio.wait([
             client.catch_up() for client in context.clients.values()
-        ]))
+        ], loop=event_loop))
 
 def shutdown():
     for vk_user_id in context.connections:
