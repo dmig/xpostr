@@ -1,7 +1,6 @@
 #
 # TG -> VK connection handlers
 #
-import asyncio
 import logging
 from lib import db
 from lib.daemon.xpost_connection import Connection
@@ -27,10 +26,10 @@ async def handle_set_connection(vk_user_id: int, vk_group_id: int, tg_channel_id
 
     if active:
         await add_connection(vk_user_id, conn)
-        _logger.debug('Added connection %s', conn)
+        _logger.debug('Added connection %d: %s', vk_user_id, conn)
     else:
         remove_connection(vk_user_id, conn)
-        _logger.debug('Changed connection %s', conn)
+        _logger.debug('Changed connection %d: %s', vk_user_id, conn)
 
     db.set_group_connection(vk_user_id, vk_group_id, tg_channel_id, active)
 
@@ -43,12 +42,12 @@ def handle_remove_connection(vk_user_id: int, vk_group_id: int, tg_channel_id: i
     conn = Connection(vk_id=vk_group_id, tg_id=tg_channel_id)
 
     if conn not in context.connections.get(vk_user_id, []):
-        _logger.warning('Connection not found: %s', conn)
+        _logger.warning('Connection not found: %d %s', vk_user_id, conn)
         return False
 
     remove_connection(vk_user_id, conn)
 
-    _logger.debug('Removed connection %s', conn)
+    _logger.debug('Removed connection %d: %s', vk_user_id, conn)
 
     db.del_group_connection(vk_user_id, vk_group_id, tg_channel_id)
 

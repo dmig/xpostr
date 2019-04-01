@@ -26,6 +26,7 @@ def handle_set_vk_user(user):
     acct = context.accounts.get(int(user['id']))
 
     if acct:
+        _logger.debug('VK user update: %s', user)
         acct.update(user)
 
     db.save_user(user)
