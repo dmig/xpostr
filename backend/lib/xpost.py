@@ -285,7 +285,7 @@ class Url:
 
     def __init__(self, url, title=None):
         if url.startswith('http'):
-        self.url = url
+            self.url = url
         else:
             self.url = 'http://' + url
         self.title = title
@@ -296,17 +296,20 @@ class Url:
 class Fwd(Url, Uploadable):
     client = None
     post_id = None
-    url = ''
 
     def __init__(self, session, params, group_id, post_id, client):
         Uploadable.__init__(self, session, params, group_id)
         self.client = client
         self.post_id = post_id
+        self.url = ''
 
     async def upload(self):
         try:
-            # HACK self.group_id is Peer
-            entity = await self.client.get_entity(self.group_id)
+            # HACK self.group_id is Peer or Forward
+            if isinstance(self.group_id, types.PeerChannel):
+                entity = await self.client.get_entity(self.group_id)
+            else:
+                entity = await self.group_id.get_chat()
             if entity.username:
                 self.url = 'https://t.me/{}/{}'.format(entity.username, self.post_id)
         except ValueError:
@@ -360,8 +363,9 @@ class WallPost(Uploadable):
 
         # NOTE last attachment is more significant, so telegram link will be ignored
         # if any other present
-        if self.source.fwd_from:
-            self._add_fwd_from(self.source.fwd_from, self.source.fwd_from.channel_post)
+        fwd = self.source.forward
+        if fwd and fwd.channel_id:
+            self._add_fwd_from(fwd, fwd.channel_post)
         # or add link to message itself
         elif self.source.to_id:
             self._add_fwd_from(self.source.to_id, self.source.id)
