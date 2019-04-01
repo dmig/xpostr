@@ -1,3 +1,4 @@
+import asyncio
 import logging
 from lib.daemon import context
 from lib.daemon.core import repost_message, get_client
@@ -18,5 +19,6 @@ async def handle_repost_message(vk_user_id: int, vk_group_id: int, tg_channel_id
     message = await client.get_messages(await client.get_entity(tg_channel_id), ids=msg_id)
     _logger.info('Found message: %s', message)
 
-    await repost_message(vk_user_id, vk_group_id, message)
+    asyncio.ensure_future(repost_message(vk_user_id, vk_group_id, message))\
+        .add_done_callback(lambda: _logger.info('Repost done...'))
     return True
