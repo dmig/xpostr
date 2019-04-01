@@ -55,9 +55,9 @@ def get_connection(vk_user_id: int, vk_group_id: int, tg_channel_id: int, load=F
         return lst[i]
     except ValueError:
         if load:
-            conn = db.get_group_connection(vk_user_id, vk_group_id, tg_channel_id)
-            if conn:
-                return Connection(**conn)
+            cn = db.get_group_connection(vk_user_id, vk_group_id, tg_channel_id)
+            if cn:
+                return Connection(**cn)
         return conn
 
 def set_connection_status(vk_user_id: int, vk_group_id: int, tg_channel_id: int, status):
