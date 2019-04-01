@@ -23,7 +23,7 @@ async def handle_get_user_connections(vk_user_id: int):
                 conns.append(add_connection(vk_user_id, conn))
             lst.append(conn)
 
-        asyncio.wait(conns)
+        await asyncio.wait(conns)
 
     return lst
 
