@@ -13,6 +13,9 @@
           <q-item-label caption>{{targets}} groups available</q-item-label>
         </q-item-section>
         <q-item-section side>
+          <confirm-button round color="negative" icon="stop" @confirm="completeLogout" title="Stop reposting and logout"/>
+        </q-item-section>
+        <q-item-section side>
           <confirm-button round color="grey" icon="exit_to_app" @confirm="logout" title="Logout"/>
         </q-item-section>
         <q-item-section side>
@@ -182,21 +185,22 @@ export default {
         })
     },
     logout: function () {
-      this.loading = true
-
-      console.debug('VK logout procedure...')
       this.$store.commit('connections/reset')
       this.$store.commit('targets/reset')
       this.$store.commit('sources/reset')
       this.$store.commit('tguser/reset')
       this.$store.commit('vkuser/reset')
-
+      this.$auth.clearToken()
+      this.$root.$emit('authorization')
+    },
+    completeLogout: function () {
+      this.loading = true
+      console.debug('VK logout procedure...')
       this.$http
-        .delete(this.$eps.login)
+        .delete(this.$eps.logout)
         .then(resp => {
           if (resp.ok) {
-            this.$auth.clearToken()
-            this.$root.$emit('authorization')
+            this.logout()
           }
         })
         .catch(this.$errorNotify)
