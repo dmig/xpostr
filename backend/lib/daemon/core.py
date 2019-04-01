@@ -82,7 +82,9 @@ async def get_client(vk_user_id: int, event_loop=None) -> Awaitable[TelegramClie
         await client.connect()
         if not await client.is_user_authorized():
             # TODO set status here
-            raise errors.UnauthorizedException('Not authorized in Telegram')
+            raise errors.UnauthorizedException(
+                f'VK user_id {vk_user_id} is not authorized in Telegram'
+            )
 
         return client
     except:
