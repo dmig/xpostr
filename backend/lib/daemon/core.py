@@ -20,7 +20,7 @@ async def add_connection(vk_user_id: int, conn: Connection):
         functools.partial(_repost_message, vk_user_id, conn.vk_id)
 
     client.add_event_handler(
-        handler, events.NewMessage(chats=(conn.tg_id,)) # TODO , incoming=True
+        handler, events.NewMessage(chats=(conn.tg_id,)), incoming=True
     )
     context.connections.setdefault(vk_user_id, []).append(conn)
 
@@ -33,7 +33,7 @@ def remove_connection(vk_user_id, connection):
             return
 
         client.remove_event_handler(
-            handler, events.NewMessage(chats=(connection.tg_id,)) # TODO , incoming=True
+            handler, events.NewMessage(chats=(connection.tg_id,)), incoming=True
         )
     else:
         _logger.warning('Client not available')
@@ -85,7 +85,6 @@ async def get_client(vk_user_id: int, event_loop=None) -> Awaitable[TelegramClie
     try:
         await client.connect()
         if not await client.is_user_authorized():
-            # TODO set status here
             raise errors.UnauthorizedException(
                 f'VK user_id {vk_user_id} is not authorized in Telegram'
             )
