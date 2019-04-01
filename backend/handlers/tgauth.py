@@ -15,7 +15,7 @@ from handlers.telegram import TelegramHandler
 class TGAuth(TelegramHandler):
 
     def get(self):
-        return self._set_photo_path(rpc_call('get_tg_user', self.user['id']))
+        return self._set_photo_path(rpc_call('get_tg_user', self.user['id'], timeout=10))
 
     def post(self):
         phone = parse_phone(self.request.data.get('phone'))
