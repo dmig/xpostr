@@ -15,26 +15,28 @@ if __name__ == "__main__":
     assert loop is not None
     asyncio.set_event_loop(loop)
 
-    # preload data from DB
-    # ... and create Telegram clients
-    core.init(loop)
-    handlers.init()
-
+    server = None
     server_socket = config.get('paths', 'daemon_socket')
-    # Each client connection will create a new protocol instance
-    coro = asyncio.start_unix_server(serve, path=server_socket)
-    server = loop.run_until_complete(coro)
-
-    # Serve requests until Ctrl+C is pressed
-    logger.info('Listening on %s', server.sockets[0].getsockname())
     try:
+        # preload data from DB
+        # ... and create Telegram clients
+        core.init(loop)
+        handlers.init()
+
+        # Each client connection will create a new protocol instance
+        coro = asyncio.start_unix_server(serve, path=server_socket)
+        server = loop.run_until_complete(coro)
+
+        # Serve requests until Ctrl+C is pressed
+        logger.info('Listening on %s', server.sockets[0].getsockname())
         loop.run_forever()
     except KeyboardInterrupt:
         logger.info('Got interrupt, shutting down')
     finally:
         # Close the server
-        server.close()
-        loop.run_until_complete(server.wait_closed())
+        if server:
+            server.close()
+            loop.run_until_complete(server.wait_closed())
         core.shutdown()
         # BUG have to wait until Telethon disconnects
         loop.run_until_complete(asyncio.wait(asyncio.Task.all_tasks(loop)))
