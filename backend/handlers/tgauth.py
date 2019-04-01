@@ -89,8 +89,11 @@ class TGAuth(TelegramHandler):
             }
         except (PhoneNumberBannedError, PhoneNumberInvalidError,
                 PhoneCodeExpiredError, PhoneCodeInvalidError, PhoneCodeEmptyError,
-                PhonePasswordProtectedError, PhonePasswordFloodError, FloodWaitError,
-                FloodError) as e:
+                PhonePasswordProtectedError) as e:
+            db.del_interim_state(phone)
+            client.log_out()
+            raise HTTP_400(str(e))
+        except (FloodWaitError, FloodError, PhonePasswordFloodError) as e:
             db.del_interim_state(phone)
             raise HTTP_400(str(e))
         except HTTPError: # passthru
