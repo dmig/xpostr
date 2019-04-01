@@ -7,6 +7,7 @@ import ujson
 import aiohttp
 from telethon import TelegramClient
 from telethon.tl import types
+from telethon.helpers import add_surrogate, del_surrogate
 from lib.config import config
 from lib.errors import VKException
 
@@ -348,12 +349,11 @@ class WallPost(Uploadable):
                 break
 
         # extract urls to attachments
-        for e in self.source.entities or []:
+        for e, inner_text in self.source.get_entities_text():
             if isinstance(e, types.MessageEntityTextUrl):
-                self.attachments.append(Url(e.url))
+                self.attachments.append(Url(e.url, inner_text))
             elif isinstance(e, types.MessageEntityUrl):
-                url = self.source.raw_text[e.offset:e.offset + e.length]
-                self.attachments.append(Url(url))
+                self.attachments.append(Url(inner_text))
 
         # NOTE last attachment is more significant, so telegram link will be ignored
         # if any other present
@@ -419,11 +419,14 @@ class WallPost(Uploadable):
             types.MessageEntityUrl: '[{0}]',
             types.MessageEntityTextUrl: '[{1}|{0}]'
         }
+
+        # add_surrogate/del_surrogate are used by Telethon internally in
+        # get_entities_text -> get_inner_text to get correct offsets in unicode
+        raw_text = add_surrogate(self.source.raw_text)
         text = []
         prev = 0
-        for e in self.source.entities or []:
-            text.append(self.source.raw_text[prev:e.offset])
-            et = self.source.raw_text[e.offset:e.offset + e.length]
+        for e, et in self.source.get_entities_text():
+            text.append(del_surrogate(raw_text[prev:e.offset]))
             ev = None
             # NOTE no MessageEntityMentionName usage examples/documentation available
             # so assume it is same as MessageEntityMention
@@ -434,7 +437,8 @@ class WallPost(Uploadable):
             fmt = fmt_list.get(type(e), '{0}')
             text.append(fmt.format(et, ev))
             prev = e.offset + e.length
-        text.append(self.source.raw_text[prev:])
+        text.append(del_surrogate(raw_text[prev:]))
+        del raw_text
 
         self.attachments.append(Page(
             self.session, self.default_params, self.group_id,
