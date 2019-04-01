@@ -17,7 +17,7 @@ async def add_connection(vk_user_id: int, conn: Connection):
     client: TelegramClient = await get_client(vk_user_id)
 
     handler = context.event_handlers[(vk_user_id, conn.vk_id)] = \
-        functools.partial(_repost_message, vk_user_id, conn.vk_id)
+        functools.partial(repost_message, vk_user_id, conn.vk_id)
 
     client.add_event_handler(
         handler, events.NewMessage(chats=(conn.tg_id,), incoming=True)
@@ -163,7 +163,7 @@ def catch_task_exception(task: asyncio.Task):
     _logger.exception('Task exception: %r', exc, stack_info=task.get_stack())
     return True
 
-async def _repost_message(vk_user_id: int, vk_group_id: int, event):
+async def repost_message(vk_user_id: int, vk_group_id: int, event):
     access_token = context.accounts.get(vk_user_id, {}).get('access_token')
     if not access_token:
         _logger.error('Can\'t repost: %d `access_token` is missing', vk_user_id)
