@@ -62,8 +62,9 @@
       <q-separator />
 
       <q-card-actions align="right">
-        <q-btn stretch label="Cancel" @click="reset" v-close-popup />
-        <q-btn stretch label="Create" color="primary" @click="submit" v-close-popup />
+        <q-btn id="cancel-btn" label="Cancel" @click="reset" v-close-popup />
+        <q-btn id="create-btn" label="Create" color="primary" @click="submit"
+          :disable="!data.vk_id || !data.tg_id" v-close-popup />
       </q-card-actions>
     </q-card>
   </q-dialog>
@@ -142,4 +143,7 @@ export default {
 </script>
 
 <style>
+#create-btn, #cancel-btn {
+  padding: 0 48px
+}
 </style>
