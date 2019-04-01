@@ -5,6 +5,7 @@ sys.path.insert(0, os.path.abspath(__file__ + '/../..'))
 from telethon import TelegramClient, sync # pylint: disable=unused-import
 from telethon.tl import types
 from telethon.utils import parse_phone
+# from telethon.helpers import add_surrogate, del_surrogate
 from lib.config import config
 from lib.xpost import _type_in_list
 
@@ -27,6 +28,7 @@ try:
     if not client.is_user_authorized():
         print('Not authorized in telegram')
         exit(1)
+    client.get_dialogs()
 
     if message_ids:
         for message in client.iter_messages(client.get_entity(int(args['tg_id'])), ids=message_ids):
@@ -35,7 +37,6 @@ try:
                 continue
 
             print(message)
-            print(client.get_entity(message.to_id))
 
             min_length = config.getint('xpost', 'rich_text_min_length', fallback=256)
             is_rich = bool(message.entities) and bool(_type_in_list(
@@ -54,36 +55,27 @@ try:
 
             print('Title:', message.raw_text[0:pos] + '...')
 
-            replacements = []
-            url = None
-            print(message.entities)
-            for e in message.entities or []:
+            for e, inner_text in message.get_entities_text():
+                print(str(e), inner_text)
                 if isinstance(e, (types.MessageEntityBold, types.MessageEntityItalic,
                                   types.MessageEntityPre, types.MessageEntityCode,
                                   types.MessageEntityMentionName)):
                     is_rich = True
-                    print(e.__class__.__name__, message.raw_text[e.offset:e.offset + e.length])
-                    replacements.append(e)
                     continue
-                if not url and isinstance(e, types.MessageEntityTextUrl):
-                    url = e.url
-                if not url and isinstance(e, types.MessageEntityUrl):
-                    url = message.raw_text[e.offset:e.offset + e.length]
                 if isinstance(e, types.MessageEntityTextUrl):
-                    # print(e.offset, e.length, e.url)
-                    replacements.append(e)
+                    print('Url:', e.url)
 
             print(
                 '{} {:4}: {!r}'.format(int(is_rich), len(message.raw_text),
                                        message.text if is_rich else message.raw_text)
             )
-            print(repr(message.text))
+            # print(repr(message.text))
+            print('CHAT:', message.get_chat())
 
-            print('FWD:', message.fwd_from)
-            if message.fwd_from and message.fwd_from.channel_id:
-                entity = message.client.get_entity(message.fwd_from.channel_id)
-                # print(entity)
-                print('https://t.me/{}/{}'.format(entity.username, message.fwd_from.channel_post))
+            fwd = message.forward and message.forward.channel_id and message.forward.get_chat()
+            if fwd and fwd.username:
+                print('FWD:', fwd)
+                print('https://t.me/{}/{}'.format(fwd.username, message.fwd_from.channel_post))
 
             if not message.media:
                 continue
@@ -112,10 +104,10 @@ try:
                 # check types.DocumentAttribute*
                 continue
 
-            if isinstance(message.media, types.MessageMediaWebPage):
+            if isinstance(message.media, types.MessageMediaWebPage) and\
+                not isinstance(message.media.webpage, types.WebPageEmpty):
                 print('webpage:', message.media.webpage.title, message.media.webpage.url,
-                    '🖼' if message.media.webpage.photo else ''
-                )
+                      '🖼' if message.media.webpage.photo else '')
                 # if message.media.webpage.photo:
                     # print(client.download_media(message.media.webpage.photo))
                 continue
@@ -139,7 +131,7 @@ try:
         exit(0)
 
     for dialog in client.get_dialogs():
-        if not dialog.is_channel or dialog.is_group:
+        if not dialog.is_channel: # or dialog.is_group:
             continue
 
         print(dialog.entity.id, dialog.name)
