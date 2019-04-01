@@ -21,7 +21,6 @@ async def handle_get_user_connections(vk_user_id: int):
             conn = Connection(**c)
             if c['active']:
                 conns.append(add_connection(vk_user_id, conn))
-            lst.append(conn)
 
         await asyncio.wait(conns)
 
