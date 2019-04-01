@@ -89,6 +89,8 @@ export default {
       this.$http.post(this.$eps.tgauth, payload)
         .then(resp => {
           if (resp.data.authorized) {
+            this.showForm = false
+            this.stage = 0
             this.$store.commit('tguser/fill', resp.data)
             this.$store.dispatch('sources/load')
           } else {
