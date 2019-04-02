@@ -63,7 +63,7 @@ module.exports = function (ctx) {
 
     build: {
       env: {
-        API: ctx.dev ? "'/api'" : "'/api'" // http://localhost:9090
+        API: ctx.dev ? "'/api'" : "'api'"
       },
       scopeHoisting: true,
       // vueRouterMode: 'history',
@@ -87,10 +87,6 @@ module.exports = function (ctx) {
       open: true, // opens browser window automatically
       proxy: {
         // proxy all requests starting with /api to jsonplaceholder
-        '/vkcb': {
-          target: 'http://localhost:9090',
-          changeOrigin: true
-        },
         '/api': {
           target: 'http://localhost:9090',
           changeOrigin: true,
