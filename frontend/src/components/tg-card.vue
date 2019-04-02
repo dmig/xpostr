@@ -13,10 +13,10 @@
           <q-item-label caption>{{sources}} channels available</q-item-label>
         </q-item-section>
         <q-item-section side>
-          <confirm-button round color="grey" icon="exit_to_app" @confirm="logout" title="Logout"/>
+          <confirm-button round color="negative" icon="exit_to_app" @confirm="logout" title="Stop reposting and logout"/>
         </q-item-section>
         <q-item-section side>
-          <q-btn flat round size="lg" :loading="loading" icon="refresh" @click="reload" title="Refresh"/>
+          <q-btn flat round size="lg" :loading="loading" icon="refresh" @click="reload" title="Refresh user info and channels"/>
         </q-item-section>
       </q-item>
     </q-card-section>

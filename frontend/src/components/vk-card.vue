@@ -19,7 +19,7 @@
           <confirm-button round color="grey" icon="exit_to_app" @confirm="logout" title="Logout"/>
         </q-item-section>
         <q-item-section side>
-          <q-btn flat round size="lg" :loading="loading" icon="refresh" @click="reload" title="Refresh"/>
+          <q-btn flat round size="lg" :loading="loading" icon="refresh" @click="reload" title="Refresh user info and groups"/>
         </q-item-section>
       </q-item>
     </q-card-section>

@@ -4,7 +4,7 @@
       <q-item dense>
         <q-item-section>
           <q-item-label class="text-subtitle1">
-            Telegram channel &LongRightArrow; VK Group connections
+            Telegram channel &LongRightArrow; VK group connections
           </q-item-label>
         </q-item-section>
         <q-item-section side>
