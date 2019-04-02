@@ -1,0 +1,22 @@
+server {
+  listen 80;
+  listen [::]:80;
+
+  server_name HOST_NAME;
+
+  root APPLICATION_PATH/frontend/dist/spa;
+  index index.html;
+
+  gzip_static on;
+
+  location / {
+    try_files $uri $uri/ =404;
+  }
+
+  location /api {
+    rewrite ^/api/(.*) /$1  break;
+
+    include uwsgi_params;
+    uwsgi_pass unix:///run/uwsgi/app/xpostr-web/socket;
+  }
+}
