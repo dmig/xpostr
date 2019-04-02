@@ -171,7 +171,11 @@ async def repost_message(vk_user_id: int, vk_group_id: int, event):
         _logger.error('Can\'t repost: %d `access_token` is missing', vk_user_id)
         return
 
-    msg = event if isinstance(event, types.Message) else event.message
+    msg = event if not event or isinstance(event, types.Message) else event.message
+    if msg is None:
+        _logger.warning('Message not available for %d %d', vk_user_id, vk_group_id)
+        return
+
     try:
         xposter = xpost.WallPost(access_token, vk_group_id, msg)
         m_id = await xposter.upload()
