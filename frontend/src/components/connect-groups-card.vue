@@ -13,7 +13,7 @@
       </q-item>
     </q-card-section>
     <q-card-section>
-      <q-list separator v-show="!loading">
+      <q-list separator>
         <connection-item :item="item" v-for="item in connections" :key="item.tg_id + '-' + item.vk_id"/>
       </q-list>
     </q-card-section>
