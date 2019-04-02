@@ -1,5 +1,5 @@
 [globals]
-debug=true
+debug=false
 debug_requests=false
 debug_telethon=false
 
@@ -8,10 +8,8 @@ state_timeout=180
 
 [jwt]
 secret=PUT_SOME_RANDOM_STRING_HERE
-# minutes
+# token lifetime in minutes
 timeout=1440
-# seconds, autorefresh token if older than
-autorefresh=300
 
 [vk]
 client_id=YOUR-CLIENT-ID
@@ -20,6 +18,7 @@ client_secret=YOU-CLIENT-SECRET
 [telegram]
 api_id=YOUR-CLIENT-ID
 api_hash=YOU-CLIENT-SECRET
+# relative uri to saved avatars
 avatars_path=statics/avatars
 
 [paths]

@@ -4,12 +4,12 @@ After=network.target
 
 [Service]
 # change User/Group to user you wish to run from (www-data f.e.)
-User=YOUR-USER
-Group=YOUR-USER
-# replace /PROJECT_PATH with full path to project code
-WorkingDirectory=/PROJECT_PATH/xpostr/backend
-# replace /PROJECT_PATH with full path to your virtualenv (`pipenv --venv` may show this)
-Environment="PATH=/PROJECT_PATH/bin"
+User=YOUR_USER
+Group=YOUR_USER
+# replace APPLICATION_PATH with full path to backend code
+WorkingDirectory=APPLICATION_PATH/xpostr/backend
+# replace VENV_PATH with full path to your virtualenv (`pipenv --venv` may show this)
+Environment="PATH=VENV_PATH/bin"
 ExecStart=daemon.py
 Restart=on-failure
 StandardOutput=append:/var/log/xpostr-daemon.log

@@ -1,7 +1,7 @@
 [uwsgi]
 module = api:app
-; chdir = {{PROJECT_PATH}}/backend
-; virtualenv = {{PROJECT_PATH}}/backend/venv
+chdir = APPLICATION_PATH/backend
+virtualenv = VENV_PATH
 
 # maximum number of workers that can be spawned
 workers = 64
