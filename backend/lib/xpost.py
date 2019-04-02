@@ -447,7 +447,7 @@ class WallPost(Uploadable):
             elif isinstance(e, types.MessageEntityTextUrl):
                 ev = e.url
             fmt = fmt_list.get(type(e), '{0}')
-            text.append(fmt.format(et, ev))
+            text.append(del_surrogate(fmt.format(et, ev)))
             prev = e.offset + e.length
         text.append(del_surrogate(raw_text[prev:]))
         del raw_text
@@ -522,7 +522,7 @@ class WallPost(Uploadable):
             msg = []
             prev = 0
             for tu in text_urls:
-                title = raw_text[prev:(tu.offset + tu.length)]
+                title = del_surrogate(raw_text[prev:(tu.offset + tu.length)])
                 # link titles to telegraph photos look like \u200b\u200b
                 if _ZERO_CHARS.match(title):
                     continue
