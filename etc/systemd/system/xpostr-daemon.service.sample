@@ -8,7 +8,7 @@ User=YOUR_USER
 Group=YOUR_USER
 # replace APPLICATION_PATH with full path to backend code
 WorkingDirectory=APPLICATION_PATH/xpostr/backend
-# replace VENV_PATH with full path to your virtualenv (`pipenv --venv` may show this)
+# replace VENV_PATH with full path to your virtualenv (use `pipenv --venv` to get it)
 Environment="PATH=VENV_PATH/bin"
 ExecStart=daemon.py
 Restart=on-failure

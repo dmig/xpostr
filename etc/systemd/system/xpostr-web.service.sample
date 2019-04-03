@@ -12,9 +12,9 @@ User=YOUR_USER
 Group=YOUR_USER
 # replace APPLICATION_PATH with full path to backend code
 WorkingDirectory=APPLICATION_PATH/xpostr/backend
-# replace VENV_PATH with full path to your virtualenv (`pipenv --venv` may show this)
+# replace VENV_PATH with full path to your virtualenv (use `pipenv --venv` to get it)
 Environment="PATH=VENV_PATH/bin"
-ExecStart=uwsgi etc/uwsgi/applications-available/xpostr-web.ini
+ExecStart=VENV_PATH/bin/uwsgi etc/uwsgi/applications-available/xpostr-web.ini
 Restart=on-failure
 StandardOutput=append:/var/log/xpostr-web.log
 StandardError=append:/var/log/xpostr-web.log
