@@ -66,9 +66,13 @@ def connect(db, ro=False):
         __connections[k].set_trace_callback(_logger.debug)
 
     cursor = __connections[k].cursor()
-    cursor.execute("select count(*) from sqlite_master where type='table'")
+    cursor.execute(
+        "select count(*) from sqlite_master where type='table' AND name IN ('{}')".format(
+            "', '".join(__tables[db].keys())
+        )
+    )
     cnt = cursor.fetchone()[0]
-    if not cnt:
+    if cnt < len(__tables[db]):
         if ro:
             raise Exception(f'DB {db} not ready')
 
