@@ -38,8 +38,9 @@ if __name__ == "__main__":
             server.close()
             loop.run_until_complete(server.wait_closed())
         core.shutdown()
-        # BUG have to wait until Telethon disconnects
-        loop.run_until_complete(asyncio.wait(asyncio.Task.all_tasks(loop)))
+        leftover = asyncio.Task.all_tasks(loop)
+        if leftover:
+            loop.run_until_complete(asyncio.wait(leftover))
         loop.close()
         if os.path.exists(server_socket):
             os.unlink(server_socket)
