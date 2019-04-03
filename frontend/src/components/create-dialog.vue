@@ -10,7 +10,7 @@
       <q-card-section style="height: 50vh">
         <q-select use-input outlined emit-value map-options
           input-debounce="100" option-value="id" option-label="title" class="q-mb-md"
-          v-model="data.tg_id" :options="srcOpts" @filter="filterSrc" label="Telegram channel">
+          v-model="tg_id" :options="srcOpts" @filter="filterSrc" label="Telegram channel">
           <template v-slot:option="scope">
             <q-item v-bind="scope.itemProps" v-on="scope.itemEvents">
               <q-item-section avatar>
@@ -34,7 +34,7 @@
         </q-select>
         <q-select use-input outlined emit-value map-options
           input-debounce="100" option-value="id" option-label="title" class="q-mb-md"
-          v-model="data.vk_id" :options="tgtOpts" @filter="filterTgt" label="VK Group">
+          v-model="vk_id" :options="tgtOpts" @filter="filterTgt" label="VK Group">
           <template v-slot:option="scope">
             <q-item v-bind="scope.itemProps" v-on="scope.itemEvents">
               <q-item-section avatar>
@@ -56,15 +56,15 @@
             </q-item>
           </template>
         </q-select>
-        <q-checkbox v-model="data.active" label="Active" />
+        <q-checkbox v-model="active" label="Active" />
       </q-card-section>
 
       <q-separator />
 
       <q-card-actions align="right">
-        <q-btn id="cancel-btn" label="Cancel" @click="reset" v-close-popup />
+        <q-btn id="cancel-btn" label="Cancel" @click="reset"/>
         <q-btn id="create-btn" label="Create" color="primary" @click="submit"
-          :disable="!data.vk_id || !data.tg_id" v-close-popup />
+          :disable="!vk_id || !tg_id"/>
       </q-card-actions>
     </q-card>
   </q-dialog>
@@ -78,11 +78,9 @@ export default {
       dialog: false,
       srcOpts: [],
       tgtOpts: [],
-      data: {
-        vk_id: '',
-        tg_id: '',
-        active: true
-      }
+      vk_id: '',
+      tg_id: '',
+      active: true
     }
   },
   computed: {
@@ -95,14 +93,16 @@ export default {
   },
   methods: {
     reset () {
-      this.data.vk_id = ''
-      this.data.tg_id = ''
-      this.data.active = true
+      this.vk_id = ''
+      this.tg_id = ''
+      this.active = true
+      this.dialog = false
     },
     submit () {
-      if (this.data.vk_id && this.data.tg_id) {
-        this.$root.$emit('createConnection', { ...this.data })
-      }
+      if (!this.vk_id || !this.tg_id) return
+
+      console.debug('emitting event createConnection')
+      this.$root.$emit('createConnection', { vk_id: this.vk_id, tg_id: this.tg_id, active: this.active })
       this.reset()
     },
     filterSrc (val, update) {
