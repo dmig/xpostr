@@ -2,8 +2,9 @@
 # (not system-wide installed) uwsgi instance
 
 [Unit]
-Description=XPostr web services
-After=network.target
+Description=XPostr web service
+After=xpostr-daemon.service
+Requires=xpostr-daemon.service
 
 [Service]
 # change User/Group to user you wish to run from (www-data f.e.)
@@ -17,3 +18,6 @@ ExecStart=uwsgi etc/uwsgi/applications-available/xpostr-web.ini
 Restart=on-failure
 StandardOutput=append:/var/log/xpostr-web.log
 StandardError=append:/var/log/xpostr-web.log
+
+[Install]
+WantedBy=multi-user.target
