@@ -3,7 +3,7 @@ This is a standalone [Telegram](https://telegram.org) -> [VK](https://vk.com) cr
 
 - [Requirements](#requirements)
 - [Installation](#installation)
-  - [prereqisutes](#prereqisutes)
+  - [prereqisites](#prereqisites)
   - [backend](#backend)
   - [frontend](#frontend)
 - [Configuring](#configuring)
@@ -29,7 +29,7 @@ If you plan to build frontent:
 - `quasar` (https://v1.quasar-framework.org/quasar-cli/installation)
 
 # Installation
-## prereqisutes
+## prereqisites
 - Make sure you have Python 3.7 installed __or__ if you don't want to (or can't) install it, change `Pipfile`
   ```ini
   [requires]
