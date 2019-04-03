@@ -46,9 +46,6 @@ async def handle_get_sources(vk_user_id: int):
     await asyncio.wait([p[0] for p in photos])
 
     for p in photos:
-        if catch_task_exception(p[0]):
-            continue
-
         p[1]['photo'] = p[0].result()
 
     return ret
@@ -89,11 +86,10 @@ async def _get_photo(client: TelegramClient, entity: Union[types.User, types.Cha
         # if file was updated, remove old one
         for f in glob(os.path.join(config.get('paths', 'avatars'), str(entity.id) + '*.jpg')):
             os.unlink(f)
-        try:
-            await client.download_profile_photo(entity, file=filepath, download_big=False)
-        except Exception as e:
-            _logger.exception('Photo download exception: %r', e)
-            filename = None
+
+        asyncio.ensure_future(
+            client.download_profile_photo(entity, file=filepath, download_big=False)
+        ).add_done_callback(catch_task_exception)
 
     return filename
 #endregion
