@@ -2,10 +2,7 @@
   <q-item :item="item">
     <q-item-section avatar>
       <q-btn flat round :disable="!source.uri" @click="goto('t.me', source.uri)" title="Open channel">
-        <q-avatar size="32px">
-          <img v-if="source.photo" :src="source.photo"/>
-          <img v-else src="~assets/Telegram_logo.svg"/>
-        </q-avatar>
+        <tg-avatar size="32px" :src="source.photo" />
       </q-btn>
     </q-item-section>
     <q-item-section>
@@ -38,11 +35,12 @@
 
 <script>
 import ConfirmButton from 'components/confirm-button'
+import TgAvatar from 'components/tg-avatar'
 import { openURL } from 'quasar'
 
 export default {
   name: 'ConnectionItem',
-  components: { ConfirmButton },
+  components: { ConfirmButton, TgAvatar },
   props: {
     item: Object
   },

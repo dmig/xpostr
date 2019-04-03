@@ -3,10 +3,7 @@
     <q-card-section>
       <q-item dense :disable="loading">
         <q-item-section avatar>
-          <q-avatar size="64px">
-            <img v-if="user.photo" :src="user.photo" />
-            <img v-else src="~assets/Telegram_logo.svg" />
-          </q-avatar>
+          <tg-avatar size="64px" :src="user.photo" />
         </q-item-section>
         <q-item-section>
           <q-item-label>{{user.fullname}}</q-item-label>
@@ -60,10 +57,11 @@
 <script>
 import AuthMixin from 'components/auth-mixin'
 import ConfirmButton from 'components/confirm-button'
+import TgAvatar from 'components/tg-avatar'
 
 export default {
   // name: 'ComponentName',
-  components: { ConfirmButton },
+  components: { ConfirmButton, TgAvatar },
   mixins: [AuthMixin],
   data () {
     return {
