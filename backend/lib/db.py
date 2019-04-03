@@ -229,6 +229,7 @@ def get_group_connection(user_id, vk_id, tg_id):
 
     res = cursor.fetchone()
     if res:
+        res = {k:res[k] for k in res.keys()}
         try:
             res['options'] = json.loads(res['options']) if res['options'] else {}
         except Exception as e:
