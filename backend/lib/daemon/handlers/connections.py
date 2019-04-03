@@ -10,7 +10,7 @@ from lib.daemon.core import get_connection, add_connection, remove_connection
 _logger = logging.getLogger(__name__)
 
 def handle_get_connections(vk_user_id: int):
-    return [{c:conn[c] for c in conn.keys()} for conn in db.get_group_connections(vk_user_id)]
+    return db.get_group_connections(vk_user_id)
 
 async def handle_set_connection(vk_user_id: int, vk_group_id: int, tg_channel_id: int, active=True):
     vk_user_id = int(vk_user_id)
