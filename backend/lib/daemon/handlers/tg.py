@@ -74,7 +74,7 @@ async def _get_photo(client: TelegramClient, entity: Union[types.User, types.Cha
         return None
 
     photo = entity.photo.photo_small\
-        if isinstance(entity.photo, types.ChatPhoto, types.UserProfilePhoto)\
+        if isinstance(entity.photo, (types.ChatPhoto, types.UserProfilePhoto))\
         else entity.photo
 
     filename = '{0}.{1}.jpg'.format(
