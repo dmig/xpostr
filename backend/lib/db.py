@@ -11,14 +11,14 @@ from lib.config import config
 _logger = logging.getLogger(__name__)
 __connections = {}
 __tables = {
-    'auth': [
-        """auth_interim (
+    'auth': {
+        'auth_interim': """(
             state varchar(256) not null,
             expire int unsigned not null,
             data text not null,
             primary key (state)
         )""",
-    ],
+    },
     'main': {
         'vk_users': """(
             id int unsigned not null,
@@ -192,6 +192,7 @@ def get_group_connections(user_id):
         except Exception as e:
             _logger.error('json.loads error: %s for data %r', e, it['options'])
             it['options'] = {}
+        res.append(it)
     cursor.close()
 
     return res
