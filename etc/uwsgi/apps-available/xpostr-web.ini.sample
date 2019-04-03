@@ -2,6 +2,8 @@
 module = api:app
 chdir = APPLICATION_PATH/backend
 virtualenv = VENV_PATH
+# set this parameter if running from virtualenv
+# socket = /var/run/uwsgi/xpostr-web.socket
 
 # maximum number of workers that can be spawned
 workers = 64
