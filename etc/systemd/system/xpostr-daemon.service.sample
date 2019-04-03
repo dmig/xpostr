@@ -11,9 +11,10 @@ WorkingDirectory=APPLICATION_PATH/xpostr/backend
 # replace VENV_PATH with full path to your virtualenv (use `pipenv --venv` to get it)
 Environment="PATH=VENV_PATH/bin"
 ExecStart=daemon.py
+KillSignal=SIGINT
 Restart=on-failure
-StandardOutput=append:/var/log/xpostr-daemon.log
-StandardError=append:/var/log/xpostr-daemon.log
+StandardOutput=file:/var/log/xpostr-daemon.log
+StandardError=file:/var/log/xpostr-daemon.log
 
 [Install]
 WantedBy=multi-user.target

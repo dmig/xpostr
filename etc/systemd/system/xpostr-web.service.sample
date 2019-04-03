@@ -4,20 +4,20 @@
 [Unit]
 Description=XPostr web service
 After=xpostr-daemon.service
-Requires=xpostr-daemon.service
 
 [Service]
 # change User/Group to user you wish to run from (www-data f.e.)
 User=YOUR_USER
 Group=YOUR_USER
-# replace APPLICATION_PATH with full path to backend code
-WorkingDirectory=APPLICATION_PATH/xpostr/backend
+# replace APPLICATION_PATH with full path to application code
+WorkingDirectory=APPLICATION_PATH/xpostr
 # replace VENV_PATH with full path to your virtualenv (use `pipenv --venv` to get it)
 Environment="PATH=VENV_PATH/bin"
-ExecStart=VENV_PATH/bin/uwsgi etc/uwsgi/applications-available/xpostr-web.ini
+ExecStart=VENV_PATH/bin/uwsgi etc/uwsgi/apps-available/xpostr-web.ini
+KillSignal=SIGINT
 Restart=on-failure
-StandardOutput=append:/var/log/xpostr-web.log
-StandardError=append:/var/log/xpostr-web.log
+StandardOutput=file:/var/log/xpostr-web.log
+StandardError=file:/var/log/xpostr-web.log
 
 [Install]
 WantedBy=multi-user.target
