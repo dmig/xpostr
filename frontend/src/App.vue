@@ -23,10 +23,10 @@ export default {
   components: { VkCard, TgCard, ConnectGroupsCard, CreateDialog },
   computed: {
     is_vk_authorized () {
-      return this.$store.state.vkuser.id !== 0
+      return this.is_auth && this.$store.state.vkuser.id !== 0
     },
     is_tg_authorized () {
-      return this.$store.state.tguser.authorized
+      return this.is_auth && this.$store.state.tguser.authorized
     }
   },
   data () {
