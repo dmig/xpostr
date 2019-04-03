@@ -19,25 +19,26 @@ __tables = {
             primary key (state)
         )""",
     ],
-    'main': [
-        """vk_users (
+    'main': {
+        'vk_users': """(
             id int unsigned not null,
             fullname varchar(256) not null,
             photo varchar(256),
             phone_number varchar(32),
             access_token varchar(256) not null,
             primary key (id)
-        )"""
-        """group_connections (
+        )""",
+        'group_connections': """(
             user_id int unsigned not null,
             tg_id int unsigned not null,
             vk_id int unsigned not null,
             active tinyint not null default 1,
+            options text,
             last_status varchar(256),
             last_update int unsigned,
             primary key (user_id, tg_id, vk_id)
         )"""
-    ]
+    }
 }
 
 def connect(db, ro=False):
@@ -59,6 +60,10 @@ def connect(db, ro=False):
         check_same_thread=False, uri=True
     )
     __connections[k].row_factory = sqlite3.Row
+    if config.get('globals', 'debug', fallback=False) and\
+        config.get('globals', 'debug_sql', fallback=False):
+        _logger.debug('Enabling SQLite query trace')
+        __connections[k].set_trace_callback(_logger.debug)
 
     cursor = __connections[k].cursor()
     cursor.execute("select count(*) from sqlite_master where type='table'")
@@ -67,8 +72,9 @@ def connect(db, ro=False):
         if ro:
             raise Exception(f'DB {db} not ready')
 
-        for d in __tables[db]:
-            cursor.execute('create table {}'.format(d))
+        for name, definition in __tables[db].items():
+            _logger.debug('Creating table `%s`', name)
+            cursor.execute(f'create table {name} {definition}')
         cursor.connection.commit()
     cursor.close()
 
@@ -173,12 +179,19 @@ def get_group_connections(user_id):
     cursor = get_cursor()
 
     cursor.execute(
-        'SELECT vk_id, tg_id, active, last_status, last_update '
+        'SELECT vk_id, tg_id, active, options, last_status, last_update '
         'FROM group_connections WHERE user_id = ?',
         (user_id, )
     )
 
-    res = cursor.fetchall()
+    res = []
+    for it in cursor.fetchall():
+        it = {k:it[k] for k in it.keys()}
+        try:
+            it['options'] = json.loads(it['options']) if it['options'] else {}
+        except Exception as e:
+            _logger.error('json.loads error: %s for data %r', e, it['options'])
+            it['options'] = {}
     cursor.close()
 
     return res
@@ -187,13 +200,19 @@ def get_group_connection(user_id, vk_id, tg_id):
     cursor = get_cursor()
 
     cursor.execute(
-        'SELECT vk_id, tg_id, active, last_status, last_update '
+        'SELECT vk_id, tg_id, active, options, last_status, last_update '
         'FROM group_connections '
         'WHERE user_id = ? AND tg_id = ? AND vk_id = ?',
         (user_id, tg_id, vk_id)
     )
 
     res = cursor.fetchone()
+    if res:
+        try:
+            res['options'] = json.loads(res['options']) if res['options'] else {}
+        except Exception as e:
+            _logger.error('json.loads error: %s for data %r', e, res['options'])
+            res['options'] = {}
     cursor.close()
 
     return res
@@ -217,6 +236,24 @@ def set_group_connection_status(user_id, vk_id, tg_id, status):
         'UPDATE group_connections SET last_status=?, last_update=? '
         'WHERE user_id=? AND vk_id=? AND tg_id=?',
         (status, int(time()), user_id, vk_id, tg_id)
+    )
+
+    cursor.connection.commit()
+    cursor.close()
+
+def set_group_connection_options(user_id, vk_id, tg_id, options):
+    cursor = get_cursor()
+
+    try:
+        options = json.dumps(options)
+    except Exception as e:
+        _logger.error('json.dumps error: %s for data %r', e, options)
+        options = '{}'
+
+    cursor.execute(
+        'UPDATE group_connections SET options=? '
+        'WHERE user_id=? AND vk_id=? AND tg_id=?',
+        (options, int(time()), user_id, vk_id, tg_id)
     )
 
     cursor.connection.commit()
