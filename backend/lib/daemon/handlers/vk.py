@@ -76,4 +76,4 @@ async def handle_get_targets(vk_user_id):
         'title': g['name'],
         'photo': g['photo_100'],
         'uri': g['screen_name']
-    } for g in r.get('response', {}).get('items', []) if g['can_post']]
+    } for g in r.get('response', {}).get('items', []) if g.get('can_post')]
