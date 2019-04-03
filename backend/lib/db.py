@@ -147,13 +147,29 @@ def get_user(user_id):
 def save_user(user):
     cursor = get_cursor()
 
-    cursor.execute(
-        'INSERT INTO vk_users (id, fullname, photo, access_token) '
-        'VALUES (:id, :fullname, :photo, :access_token) '
-        'ON CONFLICT(id) DO UPDATE '
-        'SET fullname=excluded.fullname, photo=excluded.photo, access_token=excluded.access_token',
-        user
-    )
+    if sqlite3.sqlite_version_info >= (3, 24, 0):
+        cursor.execute(
+            'INSERT INTO vk_users (id, fullname, photo, access_token) '
+            'VALUES (:id, :fullname, :photo, :access_token) '
+            'ON CONFLICT(id) DO UPDATE '
+            'SET fullname=excluded.fullname, photo=excluded.photo, '
+            'access_token=excluded.access_token',
+            user
+        )
+    else:
+        cursor.execute(
+            'UPDATE vk_users '
+            'SET fullname=:fullname, photo=:photo, '
+            'access_token=:access_token '
+            'WHERE id=:id',
+            user
+        )
+        if cursor.rowcount == 0:
+            cursor.execute(
+                'INSERT INTO vk_users (id, fullname, photo, access_token) '
+                'VALUES (:id, :fullname, :photo, :access_token) ',
+                user
+            )
 
     cursor.connection.commit()
     cursor.close()
@@ -225,11 +241,23 @@ def get_group_connection(user_id, vk_id, tg_id):
 def set_group_connection(user_id, vk_id, tg_id, active=True):
     cursor = get_cursor()
 
-    cursor.execute(
-        'INSERT INTO group_connections (user_id, vk_id, tg_id, active) VALUES (?, ?, ?, ?) '
-        'ON CONFLICT(user_id, vk_id, tg_id) DO UPDATE SET active=excluded.active',
-        (user_id, vk_id, tg_id, int(active))
-    )
+    if sqlite3.sqlite_version_info >= (3, 24, 0):
+        cursor.execute(
+            'INSERT INTO group_connections (user_id, vk_id, tg_id, active) VALUES (?, ?, ?, ?) '
+            'ON CONFLICT(user_id, vk_id, tg_id) DO UPDATE SET active=excluded.active',
+            (user_id, vk_id, tg_id, int(active))
+        )
+    else:
+        cursor.execute(
+            'UPDATE group_connections SET active = ? '
+            'WHERE user_id = ? AND vk_id = ? AND tg_id = ?',
+            (int(active), user_id, vk_id, tg_id)
+        )
+        if cursor.rowcount == 0:
+            cursor.execute(
+                'INSERT INTO group_connections (user_id, vk_id, tg_id, active) VALUES (?, ?, ?, ?)',
+                (user_id, vk_id, tg_id, int(active))
+            )
 
     cursor.connection.commit()
     cursor.close()
