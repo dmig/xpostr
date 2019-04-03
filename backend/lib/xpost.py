@@ -419,7 +419,7 @@ class WallPost(Uploadable):
             max_title_length - 3
         ) if p != -1)
 
-        title = self.source.raw_text[0:pos] + '...'
+        title = self.source.raw_text[0:pos].strip() + '...'
 
         fmt_list = {
             types.MessageEntityBold: '<b>{0}</b>',
