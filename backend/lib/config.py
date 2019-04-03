@@ -1,7 +1,6 @@
 import logging
 import os
 from configparser import ConfigParser, NoOptionError, NoSectionError
-import http.client as http_client
 
 __all__ = ['config', 'NoOptionError', 'NoSectionError']
 
@@ -21,6 +20,7 @@ if not config:
         logging.DEBUG if config.getboolean('globals', 'debug', fallback=False) else logging.INFO
     )
     if config.getboolean('globals', 'debug_requests', fallback=False):
+        import http.client as http_client
         http_client.HTTPConnection.debuglevel = 1
         logger = logging.getLogger("requests.packages.urllib3")
         logger.setLevel(logging.DEBUG)
