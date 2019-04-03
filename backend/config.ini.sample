@@ -2,6 +2,11 @@
 debug=false
 debug_requests=false
 debug_telethon=false
+debug_sql=false
+
+[xpost]
+# minimal Telegram message length to convert it to VK Page
+rich_text_min_length=256
 
 [oauth]
 state_timeout=180
@@ -16,6 +21,8 @@ client_id=YOUR-CLIENT-ID
 client_secret=YOU-CLIENT-SECRET
 
 [telegram]
+# enabling this option will repost unread messages on startup
+catch_up=false
 api_id=YOUR-CLIENT-ID
 api_hash=YOU-CLIENT-SECRET
 # relative uri to saved avatars
