@@ -410,7 +410,7 @@ class WallPost(Uploadable):
         if not is_rich:
             return False
 
-        min_title_length = 16
+        min_title_length = config.getint('xpost', 'min_title_length', fallback=8)
         max_title_length = min_length // 4
         pos = min(p for p in (
             self.source.raw_text.find('\n', min_title_length, max_title_length),

@@ -7,6 +7,8 @@ debug_sql=false
 [xpost]
 # minimal Telegram message length to convert it to VK Page
 rich_text_min_length=256
+# minimal length of VK Page title
+min_title_length=8
 
 [oauth]
 state_timeout=180
