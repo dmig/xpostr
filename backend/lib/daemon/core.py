@@ -20,7 +20,7 @@ async def add_connection(vk_user_id: int, conn: Connection):
         functools.partial(repost_message, vk_user_id, conn.vk_id)
 
     client.add_event_handler(
-        handler, events.NewMessage(chats=(conn.tg_id,), incoming=True)
+        handler, events.NewMessage(chats=(conn.tg_id,))
     )
     context.connections.setdefault(vk_user_id, []).append(conn)
 
@@ -33,7 +33,7 @@ def remove_connection(vk_user_id, connection):
             return
 
         client.remove_event_handler(
-            handler, events.NewMessage(chats=(connection.tg_id,), incoming=True)
+            handler, events.NewMessage(chats=(connection.tg_id,))
         )
     else:
         _logger.warning('Client not available')
