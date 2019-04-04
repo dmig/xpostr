@@ -64,6 +64,11 @@ async def handle_get_tg_user(vk_user_id: int):
         'photo': await _get_photo(client, me)
     }
 
+async def handle_is_tg_authorized(vk_user_id: int):
+    client = await get_client(vk_user_id)
+    return await client.is_user_authorized()
+
+
 async def handle_remove_tg_user(vk_user_id: int):
     return await remove_tg_user(int(vk_user_id))
 
