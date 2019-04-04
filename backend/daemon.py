@@ -8,6 +8,8 @@ from aiorpc import serve
 from lib.config import config
 from lib.daemon import core, handlers
 
+__version__ = '0.2.1'
+
 logger = logging.getLogger('xpostr-daemon')
 
 if __name__ == "__main__":

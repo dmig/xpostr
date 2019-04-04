@@ -12,6 +12,7 @@ from handlers.tgchannels import TGChannels
 from handlers.connections import Connections
 from handlers.test import Test
 
+__version__ = '0.2.1'
 
 class app(WSGI):
     routes = [
