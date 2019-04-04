@@ -71,7 +71,7 @@ class VKAuth(LoggerHandler):
                 'access_token': auth['access_token']
             } if user else {}
 
-            res = rpc_call('set_vk_user', user)
+            rpc_call('set_vk_user', user)
 
             token = jwt_auth.create_token({
                 'id': auth['user_id'],
@@ -80,7 +80,10 @@ class VKAuth(LoggerHandler):
 
             self.logger.info('Issued JWT: %s', token)
 
-            return {'token': 'Bearer ' + token.decode("utf-8")}
+            return {
+                'token': 'Bearer ' + token.decode("utf-8"),
+                'tgauth': user.get('id') and rpc_call('is_tg_authorized', user['id'])
+            }
         except exceptions.HTTPError as e:
             self.logger.info('Error authorizing user on VK: %s', e)
             if e.response.status_code == 401:
