@@ -1,7 +1,7 @@
 export function fill (state, user) {
   reset(state)
   if (!user) return
-  for (let k in state) state[k] = user[k]
+  for (let k in state) if (k in user) state[k] = user[k]
 }
 
 export function reset (state) {
