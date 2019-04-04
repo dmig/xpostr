@@ -34,6 +34,9 @@ export default {
       is_auth: false
     }
   },
+  created () {
+    this.$q.screen.setSizes({ sm: 480, md: 640, lg: 960, xl: 1200 })
+  },
   mounted () {
     this.is_auth = this.is_authorized()
     this.$root.$on('authorization', () => {

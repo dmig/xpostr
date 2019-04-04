@@ -1,25 +1,25 @@
 <template>
-  <q-card bordered v-if="user.authorized">
-    <q-card-section>
+  <q-card v-if="user.authorized">
+    <q-list :class="{'q-py-md': true, 'q-px-md': $q.screen.gt.xs}">
       <q-item dense :disable="loading">
         <q-item-section avatar>
-          <tg-avatar size="64px" :src="user.photo" />
+          <tg-avatar :size="$q.screen.gt.xs ? '64px' : '32px'" :src="user.photo" />
         </q-item-section>
         <q-item-section>
           <q-item-label>{{user.fullname}}</q-item-label>
-          <q-item-label caption>{{sources}} channels available</q-item-label>
+          <q-item-label caption>{{sources}} channels<span v-if="$q.screen.gt.xs"> available</span></q-item-label>
         </q-item-section>
         <q-item-section side>
-          <confirm-button round color="negative" icon="exit_to_app" @confirm="logout" title="Stop reposting and logout"/>
+          <confirm-button :size="$q.screen.gt.xs ? 'md' : 'sm'" round color="negative" icon="exit_to_app" @confirm="logout" title="Stop reposting and logout"/>
         </q-item-section>
         <q-item-section side>
-          <q-btn flat round size="lg" :loading="loading" icon="refresh" @click="reload" title="Refresh user info and channels"/>
+          <q-btn flat round :size="$q.screen.gt.xs ? 'lg' : 'md'" :loading="loading" icon="refresh" @click="reload" title="Refresh user info and channels"/>
         </q-item-section>
       </q-item>
-    </q-card-section>
+    </q-list>
   </q-card>
-  <q-card bordered v-else>
-    <q-card-section>
+  <q-card v-else>
+    <q-list :class="{'q-py-md': true, 'q-px-md': $q.screen.gt.xs}">
       <q-item dense ripple clickable @click="showForm = true">
         <q-item-section avatar>
           <q-avatar size="64px">
@@ -30,8 +30,8 @@
           <q-item-label>Login to Telegram to continue</q-item-label>
         </q-item-section>
       </q-item>
-    </q-card-section>
-    <q-card-section v-if="showForm" class="row">
+    </q-list>
+    <q-list v-if="showForm" :class="{'row': true, 'q-py-md': true, 'q-px-md': $q.screen.gt.xs}">
       <q-list class="offset-md-4 col-md-4 offset-sm-3 col-sm-6 offset-xs-1 col-xs-10">
         <q-item>
           <q-input class="full-width" v-model="tel" type="tel" mask="###############" label="Phone number"
@@ -47,7 +47,7 @@
           :readonly="loading"  @keyup.enter="login"/>
         </q-item>
       </q-list>
-    </q-card-section>
+    </q-list>
     <q-card-actions align="right" v-if="showForm">
       <q-btn id="submit-btn" color="primary" :loading="loading" @click="login">Submit</q-btn>
     </q-card-actions>

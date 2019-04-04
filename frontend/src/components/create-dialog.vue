@@ -1,6 +1,6 @@
 <template>
   <q-dialog v-model="dialog">
-    <q-card style="max-height: 80vh; max-width: 80vw; width: 60vw">
+    <q-card :style="{'max-height': '80vh', 'width': $q.screen.gt.sm ? '60vw' : '100vw'}">
       <q-card-section>
         <div class="text-subtitile1">Create a connection</div>
       </q-card-section>
@@ -144,6 +144,6 @@ export default {
 
 <style>
 #create-btn, #cancel-btn {
-  padding: 0 48px
+  padding: 0 32px
 }
 </style>

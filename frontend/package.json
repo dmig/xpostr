@@ -1,6 +1,6 @@
 {
   "name": "xpostr",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Telegram -> VK crossposter",
   "productName": "Crossposter App",
   "repository": {

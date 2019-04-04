@@ -1,29 +1,29 @@
 <template>
-  <q-card bordered>
-    <q-card-section v-if="is_authorized()" dark class="bg-vk">
+  <q-card>
+    <q-list v-if="is_authorized()" dark :class="{'bg-vk': true, 'q-py-md': true, 'q-px-md': $q.screen.gt.xs}">
       <q-item dense dark :disable="loading">
         <q-item-section avatar>
-          <q-avatar size="64px">
+          <q-avatar :size="$q.screen.gt.xs ? '64px' : '32px'">
             <img v-if="user.photo" :src="user.photo" />
             <img v-else src="~assets/VK_Monochrome_Logo.svg" />
           </q-avatar>
         </q-item-section>
         <q-item-section>
           <q-item-label>{{user.fullname}}</q-item-label>
-          <q-item-label caption>{{targets}} groups available</q-item-label>
+          <q-item-label caption>{{targets}} groups<span v-if="$q.screen.gt.xs"> available</span></q-item-label>
         </q-item-section>
         <q-item-section side>
-          <confirm-button round color="negative" icon="stop" @confirm="completeLogout" title="Stop reposting and logout"/>
+          <confirm-button :size="$q.screen.gt.xs ? 'md' : 'sm'" round color="negative" icon="stop" @confirm="completeLogout" title="Stop reposting and logout"/>
         </q-item-section>
         <q-item-section side>
-          <confirm-button round color="grey" icon="exit_to_app" @confirm="logout" title="Logout"/>
+          <confirm-button :size="$q.screen.gt.xs ? 'md' : 'sm'" round color="grey" icon="exit_to_app" @confirm="logout" title="Logout"/>
         </q-item-section>
         <q-item-section side>
-          <q-btn flat round size="lg" :loading="loading" icon="refresh" @click="reload" title="Refresh user info and groups"/>
+          <q-btn flat round :size="$q.screen.gt.xs ? 'lg' : 'md'" :loading="loading" icon="refresh" @click="reload" title="Refresh user info and groups"/>
         </q-item-section>
       </q-item>
-    </q-card-section>
-    <q-card-section v-else dark class="bg-vk">
+    </q-list>
+    <q-list v-else dark :class="{'bg-vk': true, 'q-py-md': true, 'q-px-md': $q.screen.gt.xs}">
       <q-item clickable dark dense ripple @click="open=true" :disable="loading">
         <q-item-section side>
           <q-avatar size="64px">
@@ -37,8 +37,8 @@
           <q-spinner size="3em" color="white"/>
         </q-item-section>
       </q-item>
-    </q-card-section>
-    <q-card-section v-if="open" class="">
+    </q-list>
+    <q-list v-if="open" :class="{'q-py-md': true, 'q-px-md': $q.screen.gt.xs}">
       <q-list>
         <q-item>
           <q-item-section avatar>
@@ -84,7 +84,7 @@
           </q-item-section>
         </q-item>
       </q-list>
-    </q-card-section>
+    </q-list>
     <q-separator v-if="open"/>
     <q-card-actions v-if="open" align="right">
       <q-btn flat color="primary" id="proceed-btn" ref="proceed-btn"

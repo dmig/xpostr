@@ -1,8 +1,8 @@
 <template>
-  <q-item :item="item">
+  <q-item>
     <q-item-section avatar>
       <q-btn flat round :disable="!source.uri" @click="goto('t.me', source.uri)" title="Open channel">
-        <tg-avatar size="32px" :src="source.photo" />
+        <tg-avatar :size="$q.screen.gt.xs ? '32px' : '16px'" :src="source.photo" />
       </q-btn>
     </q-item-section>
     <q-item-section>
@@ -17,18 +17,20 @@
     </q-item-section>
     <q-item-section avatar>
       <q-btn flat round :disable="!target.uri"  @click="goto('vk.com', target.uri)" title="Open group">
-        <q-avatar size="32px">
+        <q-avatar :size="$q.screen.gt.xs ? '32px' : '16px'">
           <img v-if="target.photo" :src="target.photo"/>
           <img v-else src="~assets/VK_Blue_Logo.svg"/>
         </q-avatar>
       </q-btn>
     </q-item-section>
     <q-item-section side>
-      <confirm-button round icon="delete" color="negative" @confirm="del(item)" title="Remove"/>
+      <confirm-button :size="$q.screen.gt.xs ? 'md' : 'sm'" round icon="delete" color="negative"
+        @confirm="del(item)" title="Remove"/>
     </q-item-section>
     <q-item-section side>
-      <q-btn round color="primary" v-show="!item.active" icon="play_arrow" @click="toggle_state()" title="Start"/>
-      <q-btn round color="primary" v-show="item.active" icon="pause" @click="toggle_state()" title="Stop"/>
+      <q-btn :size="$q.screen.gt.xs ? 'md' : 'sm'" round color="primary"
+        :icon="item.active ?'pause' : 'play_arrow'" :title="item.active ? 'Stop' : 'Start'"
+        @click="toggle_state()" />
     </q-item-section>
   </q-item>
 </template>

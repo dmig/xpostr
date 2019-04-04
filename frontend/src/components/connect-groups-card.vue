@@ -1,22 +1,22 @@
 <template>
-  <q-card bordered>
-    <q-card-section>
-      <q-item dense>
+  <q-card>
+    <q-list :class="{'q-py-md': true, 'q-px-md': $q.screen.gt.xs}">
+      <q-item :dense="$q.screen.xs">
         <q-item-section>
           <q-item-label class="text-subtitle1">
-            Telegram channel &LongRightArrow; VK group connections
+            Telegram channel &#10140; VK group<span v-if="$q.screen.gt.xs"> connections</span>
           </q-item-label>
         </q-item-section>
         <q-item-section side>
           <q-btn flat round :loading="loading" icon="refresh" @click="reload" title="Refresh"/>
         </q-item-section>
       </q-item>
-    </q-card-section>
-    <q-card-section>
+    </q-list>
+    <q-list :class="{'q-pb-md': true, 'q-px-md': $q.screen.gt.xs}">
       <q-list separator>
         <connection-item :item="item" v-for="item in connections" :key="item.tg_id + '-' + item.vk_id"/>
       </q-list>
-    </q-card-section>
+    </q-list>
 
     <q-separator />
 
@@ -65,7 +65,4 @@ export default {
 </script>
 
 <style>
-.name-label {
-  height: 1.2em !important
-}
 </style>
