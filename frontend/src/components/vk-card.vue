@@ -171,6 +171,7 @@ export default {
           console.debug(resp)
           if (resp.ok && resp.data.token) {
             this.$auth.setToken(resp.data.token)
+            this.$store.commit('tguser/fill', { authorized: resp.data.tgauth })
             this.$root.$emit('authorization')
             this.reload()
           }
