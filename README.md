@@ -138,7 +138,7 @@ __TODO__
 - Telegram voice messages: uploads successfully but VK doesn't attach them, so message looks empty (probably also need conversion to MP3).
 - Telegram message media: sometimes telegram server kicks client when downloading media -- this may lead to missing attachment or fail to post to VK.
 - Web UI: On JWT expiration authorized state isn't preperly reset
-- Web UI: Dropdowns in _Create new_ dialog are cropped to dialog borders. Quasar issue, waiting for fix.
+- Web UI: Dropdowns in _Create new_ dialog are cropped to dialog borders. Quasar issue, ~~waiting for fix~~ partially fixed as of v1.0.0-b15.
 
 # TODO
 - [ ] handle case when Telegram user revokes app access from another client
