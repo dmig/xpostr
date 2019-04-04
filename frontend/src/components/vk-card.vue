@@ -26,7 +26,7 @@
     <q-list v-else dark :class="{'bg-vk': true, 'q-py-md': true, 'q-px-md': $q.screen.gt.xs}">
       <q-item clickable dark dense ripple @click="open=true" :disable="loading">
         <q-item-section side>
-          <q-avatar size="64px">
+          <q-avatar :size="$q.screen.gt.xs ? '64px' : '32px'">
             <img src="~assets/VK_Monochrome_Logo.svg" />
           </q-avatar>
         </q-item-section>

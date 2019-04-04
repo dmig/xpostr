@@ -22,7 +22,7 @@
     <q-list :class="{'q-py-md': true, 'q-px-md': $q.screen.gt.xs}">
       <q-item dense ripple clickable @click="showForm = true">
         <q-item-section avatar>
-          <q-avatar size="64px">
+          <q-avatar :size="$q.screen.gt.xs ? '64px' : '32px'">
             <img src="~assets/Telegram_logo.svg" />
           </q-avatar>
         </q-item-section>
