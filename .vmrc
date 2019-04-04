@@ -1,0 +1,16 @@
+{
+    "default_groups": ["default", "backend"],
+    "groups": {
+        "backend": {
+            "files": [
+                {
+                    "names": ["api.py", "daemon.py"],
+                    "parser": "regexp",
+                    "kwargs": {
+                        "regex": "(?P<match_left>__version__\\s*=\\s*[\"'])(?P<version>(?:(?:\\d+)+.?)+)(?P<match_right>[\"'])"
+                    }
+                }
+            ]
+        }
+    }
+}
